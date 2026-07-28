@@ -2,7 +2,9 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { upcomingMonday } from "@/lib/days";
+import { signPhotoUrls } from "@/lib/photos";
 import { createWeeklyPlan } from "./actions";
+import PhotoGrid from "@/app/client/dashboard/PhotoGrid";
 
 export default async function ClientDetailPage({
   params,
@@ -33,6 +35,16 @@ export default async function ClientDetailPage({
     .select("id, week_start, notes")
     .eq("client_id", params.clientId)
     .order("week_start", { ascending: false });
+
+  // RLS ("coaches read linked clients' progress photos") scopes this to
+  // exactly the linked client's rows; no delete/upload path exists here.
+  const { data: photoRows } = await supabase
+    .from("progress_photos")
+    .select("id, storage_path, taken_date")
+    .eq("client_id", params.clientId)
+    .order("taken_date", { ascending: false });
+
+  const photos = await signPhotoUrls(supabase, photoRows || []);
 
   return (
     <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-8 px-4 py-12">
@@ -73,6 +85,11 @@ export default async function ClientDetailPage({
             ))}
           </ul>
         )}
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-lg font-medium text-ink">Progress photos</h2>
+        <PhotoGrid photos={photos} emptyMessage="No photos uploaded yet." />
       </section>
 
       <section className="space-y-3 rounded-lg border border-neutral bg-white p-4">

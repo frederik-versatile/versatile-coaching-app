@@ -1,8 +1,11 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/actions";
+import { signPhotoUrls } from "@/lib/photos";
 import PlanAccordion from "./PlanAccordion";
 import WeightLog from "./WeightLog";
+import PhotoUploadForm from "./PhotoUploadForm";
+import PhotoGallery from "./PhotoGallery";
 
 export default async function ClientDashboard() {
   const supabase = createClient();
@@ -58,6 +61,14 @@ export default async function ClientDashboard() {
     .eq("client_id", user.id)
     .order("log_date", { ascending: false });
 
+  const { data: photoRows } = await supabase
+    .from("progress_photos")
+    .select("id, storage_path, taken_date")
+    .eq("client_id", user.id)
+    .order("taken_date", { ascending: false });
+
+  const photos = await signPhotoUrls(supabase, photoRows || []);
+
   return (
     <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-8 px-4 py-12">
       <div className="flex items-center justify-between">
@@ -94,6 +105,12 @@ export default async function ClientDashboard() {
       </section>
 
       <WeightLog entries={weightLogs || []} />
+
+      <section className="space-y-3">
+        <h2 className="text-lg font-medium text-ink">Progress photos</h2>
+        <PhotoUploadForm clientId={user.id} />
+        <PhotoGallery photos={photos} />
+      </section>
     </main>
   );
 }
