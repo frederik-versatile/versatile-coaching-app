@@ -101,6 +101,11 @@ export default function WorkoutLogForm({
       {workout.exercises.map((exercise) => (
         <div key={exercise.id} className="space-y-2">
           <p className="text-body-sm font-medium text-ink">{exercise.name}</p>
+          <div className="flex items-center gap-2">
+            <span className="w-12" aria-hidden="true" />
+            <span className="w-20 text-caption text-charcoal">Reps</span>
+            <span className="w-28 text-caption text-charcoal">Weight (kg)</span>
+          </div>
           <div className="space-y-1">
             {(sets[exercise.id] || []).map((row, i) => (
               <div key={i} className="flex items-center gap-2">
@@ -146,13 +151,15 @@ export default function WorkoutLogForm({
         </div>
       ))}
 
-      <textarea
-        value={notes}
-        onChange={(e) => setNotes(e.target.value)}
-        placeholder="Notes (optional)"
-        rows={2}
-        className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
-      />
+      <div className="space-y-1">
+        <label className="block text-caption text-charcoal">Notes (optional)</label>
+        <textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          rows={2}
+          className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
+        />
+      </div>
 
       <div className="flex gap-2">
         <button

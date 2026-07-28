@@ -1,10 +1,8 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { DAY_LABELS } from "@/lib/days";
-import { computeDayStates } from "@/components/WeekStrip";
-import WorkoutCard from "./WorkoutCard";
-import AddWorkoutForm from "./AddWorkoutForm";
+import { computeDayStates } from "@/lib/weekState";
+import DayEditor from "./DayEditor";
 import PlanHeader from "./PlanHeader";
 
 export default async function WeeklyPlanPage({
@@ -58,7 +56,7 @@ export default async function WeeklyPlanPage({
   const dayStates = computeDayStates(workouts || [], logsByWorkoutId);
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-4 py-12">
+    <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-6 px-4 py-12">
       <div className="space-y-3">
         <Link
           href={`/coach/clients/${params.clientId}`}
@@ -72,38 +70,15 @@ export default async function WeeklyPlanPage({
           weekStart={plan.week_start}
           notes={plan.notes}
           workoutLogCount={workoutLogCount ?? 0}
-          dayStates={dayStates}
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
-        {DAY_LABELS.map((label, dayOfWeek) => {
-          const dayWorkouts = (workouts || []).filter(
-            (w) => w.day_of_week === dayOfWeek
-          );
-
-          return (
-            <div key={label} className="space-y-3">
-              <h2 className="font-display text-display-sm text-ink">{label}</h2>
-
-              {dayWorkouts.map((workout) => (
-                <WorkoutCard
-                  key={workout.id}
-                  workout={workout}
-                  clientId={params.clientId}
-                  planId={params.planId}
-                />
-              ))}
-
-              <AddWorkoutForm
-                clientId={params.clientId}
-                planId={params.planId}
-                dayOfWeek={dayOfWeek}
-              />
-            </div>
-          );
-        })}
-      </div>
+      <DayEditor
+        workouts={workouts || []}
+        dayStates={dayStates}
+        clientId={params.clientId}
+        planId={params.planId}
+      />
     </main>
   );
 }

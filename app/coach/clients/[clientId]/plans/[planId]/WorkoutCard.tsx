@@ -34,36 +34,42 @@ export default function WorkoutCard({
   const [showAddExercise, setShowAddExercise] = useState(false);
 
   return (
-    <div className="space-y-2 rounded border border-neutral bg-white p-3">
+    <div className="space-y-3 rounded border border-neutral bg-white p-4">
       {isEditing ? (
         <form
           action={async (formData) => {
             await updateWorkout(formData);
             setIsEditing(false);
           }}
-          className="space-y-2"
+          className="space-y-3"
         >
           <input type="hidden" name="client_id" value={clientId} />
           <input type="hidden" name="plan_id" value={planId} />
           <input type="hidden" name="workout_id" value={workout.id} />
 
-          <input
-            name="name"
-            defaultValue={workout.name}
-            required
-            className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
-          />
-          <select
-            name="day_of_week"
-            defaultValue={workout.day_of_week}
-            className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
-          >
-            {DAY_LABELS.map((label, i) => (
-              <option key={label} value={i}>
-                {label}
-              </option>
-            ))}
-          </select>
+          <div className="space-y-1">
+            <label className="block text-caption text-charcoal">Workout name</label>
+            <input
+              name="name"
+              defaultValue={workout.name}
+              required
+              className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="block text-caption text-charcoal">Day</label>
+            <select
+              name="day_of_week"
+              defaultValue={workout.day_of_week}
+              className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
+            >
+              {DAY_LABELS.map((label, i) => (
+                <option key={label} value={i}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
           <div className="flex gap-2">
             <button
               type="submit"
@@ -130,46 +136,57 @@ export default function WorkoutCard({
             await createExercise(formData);
             setShowAddExercise(false);
           }}
-          className="space-y-2 rounded border border-dashed border-neutral p-3"
+          className="space-y-3 rounded border border-dashed border-neutral p-3"
         >
           <input type="hidden" name="client_id" value={clientId} />
           <input type="hidden" name="plan_id" value={planId} />
           <input type="hidden" name="workout_id" value={workout.id} />
 
-          <input
-            name="name"
-            required
-            placeholder="Exercise name"
-            className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
-          />
-          <div className="grid grid-cols-3 gap-2">
+          <div className="space-y-1">
+            <label className="block text-caption text-charcoal">Exercise name</label>
             <input
-              name="target_sets"
-              type="number"
-              min={0}
-              placeholder="Sets"
-              className="rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
-            />
-            <input
-              name="target_reps"
-              placeholder="Reps (e.g. 8-10)"
-              className="rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
-            />
-            <input
-              name="target_weight_kg"
-              type="number"
-              step="0.5"
-              min={0}
-              placeholder="Weight (kg)"
-              className="rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
+              name="name"
+              required
+              className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
             />
           </div>
-          <textarea
-            name="notes"
-            placeholder="Notes"
-            rows={1}
-            className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
-          />
+          <div className="grid grid-cols-3 gap-3">
+            <div className="space-y-1">
+              <label className="block text-caption text-charcoal">Sets</label>
+              <input
+                name="target_sets"
+                type="number"
+                min={0}
+                className="w-full rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="block text-caption text-charcoal">Reps</label>
+              <input
+                name="target_reps"
+                placeholder="e.g. 8-10"
+                className="w-full rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="block text-caption text-charcoal">Weight (kg)</label>
+              <input
+                name="target_weight_kg"
+                type="number"
+                step="0.5"
+                min={0}
+                className="w-full rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
+              />
+            </div>
+          </div>
+          <div className="space-y-1">
+            <label className="block text-caption text-charcoal">Notes (optional)</label>
+            <textarea
+              name="notes"
+              rows={1}
+              className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
+            />
+          </div>
           <div className="flex gap-2">
             <button
               type="submit"

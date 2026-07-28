@@ -78,15 +78,19 @@ function MealPlanForm({
         {blocks.map((block, i) => (
           <div
             key={i}
-            className="space-y-1 rounded border border-neutral bg-white p-2"
+            className="space-y-2 rounded border border-neutral bg-white p-2"
           >
-            <div className="flex items-center gap-2">
-              <input
-                value={block.label}
-                onChange={(e) => updateBlock(i, "label", e.target.value)}
-                placeholder="Label (e.g. Breakfast)"
-                className="flex-1 rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
-              />
+            <div className="flex items-end gap-2">
+              <div className="flex-1 space-y-1">
+                <label className="block text-caption text-charcoal">
+                  Meal label (e.g. Breakfast)
+                </label>
+                <input
+                  value={block.label}
+                  onChange={(e) => updateBlock(i, "label", e.target.value)}
+                  className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
+                />
+              </div>
               <button
                 type="button"
                 onClick={() => moveBlock(i, -1)}
@@ -111,13 +115,15 @@ function MealPlanForm({
                 Remove
               </button>
             </div>
-            <textarea
-              value={block.description}
-              onChange={(e) => updateBlock(i, "description", e.target.value)}
-              placeholder="Description"
-              rows={2}
-              className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
-            />
+            <div className="space-y-1">
+              <label className="block text-caption text-charcoal">Description</label>
+              <textarea
+                value={block.description}
+                onChange={(e) => updateBlock(i, "description", e.target.value)}
+                rows={2}
+                className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
+              />
+            </div>
           </div>
         ))}
       </div>

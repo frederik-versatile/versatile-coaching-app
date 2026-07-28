@@ -91,13 +91,15 @@ export default function WorkoutView({
             />
           ) : showSkipForm ? (
             <div className="space-y-2 rounded border border-dashed border-neutral p-3">
-              <textarea
-                value={skipNotes}
-                onChange={(e) => setSkipNotes(e.target.value)}
-                placeholder="Notes (optional)"
-                rows={2}
-                className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
-              />
+              <div className="space-y-1">
+                <label className="block text-caption text-charcoal">Notes (optional)</label>
+                <textarea
+                  value={skipNotes}
+                  onChange={(e) => setSkipNotes(e.target.value)}
+                  rows={2}
+                  className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
+                />
+              </div>
               <div className="flex gap-2">
                 <button
                   type="button"

@@ -30,51 +30,62 @@ export default function ExerciseRow({
           await updateExercise(formData);
           setIsEditing(false);
         }}
-        className="space-y-2 rounded border border-accent bg-background p-3"
+        className="space-y-3 rounded border border-accent bg-background p-3"
       >
         <input type="hidden" name="client_id" value={clientId} />
         <input type="hidden" name="plan_id" value={planId} />
         <input type="hidden" name="exercise_id" value={exercise.id} />
 
-        <input
-          name="name"
-          defaultValue={exercise.name}
-          required
-          placeholder="Exercise name"
-          className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
-        />
-        <div className="grid grid-cols-3 gap-2">
+        <div className="space-y-1">
+          <label className="block text-caption text-charcoal">Exercise name</label>
           <input
-            name="target_sets"
-            type="number"
-            min={0}
-            defaultValue={exercise.target_sets ?? ""}
-            placeholder="Sets"
-            className="rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
-          />
-          <input
-            name="target_reps"
-            defaultValue={exercise.target_reps ?? ""}
-            placeholder="Reps (e.g. 8-10)"
-            className="rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
-          />
-          <input
-            name="target_weight_kg"
-            type="number"
-            step="0.5"
-            min={0}
-            defaultValue={exercise.target_weight_kg ?? ""}
-            placeholder="Weight (kg)"
-            className="rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
+            name="name"
+            defaultValue={exercise.name}
+            required
+            className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
           />
         </div>
-        <textarea
-          name="notes"
-          defaultValue={exercise.notes ?? ""}
-          placeholder="Notes"
-          rows={1}
-          className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
-        />
+        <div className="grid grid-cols-3 gap-3">
+          <div className="space-y-1">
+            <label className="block text-caption text-charcoal">Sets</label>
+            <input
+              name="target_sets"
+              type="number"
+              min={0}
+              defaultValue={exercise.target_sets ?? ""}
+              className="w-full rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="block text-caption text-charcoal">Reps</label>
+            <input
+              name="target_reps"
+              defaultValue={exercise.target_reps ?? ""}
+              placeholder="e.g. 8-10"
+              className="w-full rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="block text-caption text-charcoal">Weight (kg)</label>
+            <input
+              name="target_weight_kg"
+              type="number"
+              step="0.5"
+              min={0}
+              defaultValue={exercise.target_weight_kg ?? ""}
+              className="w-full rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
+            />
+          </div>
+        </div>
+        <div className="space-y-1">
+          <label className="block text-caption text-charcoal">Notes (optional)</label>
+          <textarea
+            name="notes"
+            defaultValue={exercise.notes ?? ""}
+            rows={1}
+            className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
+          />
+        </div>
         <div className="flex gap-2">
           <button
             type="submit"

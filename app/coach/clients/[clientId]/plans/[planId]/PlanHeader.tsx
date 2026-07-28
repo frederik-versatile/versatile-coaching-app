@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import WeekStrip, { type DayState } from "@/components/WeekStrip";
 import { updateWeeklyPlan, deleteWeeklyPlan } from "../../actions";
 
 export default function PlanHeader({
@@ -10,14 +9,12 @@ export default function PlanHeader({
   weekStart,
   notes,
   workoutLogCount,
-  dayStates,
 }: {
   clientId: string;
   planId: string;
   weekStart: string;
   notes: string | null;
   workoutLogCount: number;
-  dayStates: DayState[];
 }) {
   const [editing, setEditing] = useState(false);
   const [weekStartValue, setWeekStartValue] = useState(weekStart);
@@ -95,12 +92,9 @@ export default function PlanHeader({
 
   return (
     <div className="flex items-start justify-between gap-4">
-      <div className="flex-1 space-y-3">
-        <div>
-          <h1 className="font-display text-display-lg text-ink">Week of {weekStart}</h1>
-          {notes && <p className="text-body text-charcoal">{notes}</p>}
-        </div>
-        <WeekStrip states={dayStates} className="max-w-sm" />
+      <div>
+        <h1 className="font-display text-display-lg text-ink">Week of {weekStart}</h1>
+        {notes && <p className="text-body text-charcoal">{notes}</p>}
       </div>
       <div className="flex shrink-0 gap-3">
         <button

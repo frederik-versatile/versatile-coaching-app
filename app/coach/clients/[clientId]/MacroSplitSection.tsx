@@ -62,35 +62,43 @@ function MacroSplitForm({
           className="rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
         />
       </div>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        <input
-          type="number"
-          placeholder="Calories"
-          value={calories}
-          onChange={(e) => setCalories(e.target.value)}
-          className="rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
-        />
-        <input
-          type="number"
-          placeholder="Protein (g)"
-          value={proteinG}
-          onChange={(e) => setProteinG(e.target.value)}
-          className="rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
-        />
-        <input
-          type="number"
-          placeholder="Carbs (g)"
-          value={carbsG}
-          onChange={(e) => setCarbsG(e.target.value)}
-          className="rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
-        />
-        <input
-          type="number"
-          placeholder="Fat (g)"
-          value={fatG}
-          onChange={(e) => setFatG(e.target.value)}
-          className="rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
-        />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="space-y-1">
+          <label className="block text-caption text-charcoal">Calories</label>
+          <input
+            type="number"
+            value={calories}
+            onChange={(e) => setCalories(e.target.value)}
+            className="w-full rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
+          />
+        </div>
+        <div className="space-y-1">
+          <label className="block text-caption text-charcoal">Protein (g)</label>
+          <input
+            type="number"
+            value={proteinG}
+            onChange={(e) => setProteinG(e.target.value)}
+            className="w-full rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
+          />
+        </div>
+        <div className="space-y-1">
+          <label className="block text-caption text-charcoal">Carbs (g)</label>
+          <input
+            type="number"
+            value={carbsG}
+            onChange={(e) => setCarbsG(e.target.value)}
+            className="w-full rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
+          />
+        </div>
+        <div className="space-y-1">
+          <label className="block text-caption text-charcoal">Fat (g)</label>
+          <input
+            type="number"
+            value={fatG}
+            onChange={(e) => setFatG(e.target.value)}
+            className="w-full rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
+          />
+        </div>
       </div>
       <div className="flex gap-2">
         <button
