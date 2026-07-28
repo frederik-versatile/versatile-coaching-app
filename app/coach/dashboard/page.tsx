@@ -47,7 +47,7 @@ export default async function CoachDashboard() {
 
         {!clients || clients.length === 0 ? (
           <p className="text-charcoal">
-            No clients linked yet. Client invites aren't built yet — a
+            No clients linked yet. Client invites aren&apos;t built yet — a
             coach_clients row has to be created manually for now.
           </p>
         ) : (
