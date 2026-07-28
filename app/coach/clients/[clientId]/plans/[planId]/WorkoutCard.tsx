@@ -11,6 +11,8 @@ type Exercise = {
   target_sets: number | null;
   target_reps: string | null;
   target_weight_kg: number | null;
+  target_rir: number | null;
+  target_rest_seconds: number | null;
   notes: string | null;
 };
 
@@ -150,7 +152,7 @@ export default function WorkoutCard({
               className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
             />
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
             <div className="space-y-1">
               <label className="block text-caption text-charcoal">Sets</label>
               <input
@@ -175,6 +177,25 @@ export default function WorkoutCard({
                 type="number"
                 step="0.5"
                 min={0}
+                className="w-full rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="block text-caption text-charcoal">RIR</label>
+              <input
+                name="target_rir"
+                type="number"
+                min={0}
+                className="w-full rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="block text-caption text-charcoal">Rest (sec)</label>
+              <input
+                name="target_rest_seconds"
+                type="number"
+                min={0}
+                step="5"
                 className="w-full rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
               />
             </div>

@@ -35,7 +35,7 @@ export default async function WeeklyPlanPage({
   const { data: workouts } = await supabase
     .from("workouts")
     .select(
-      "id, day_of_week, name, sort_order, exercises(id, name, target_sets, target_reps, target_weight_kg, notes, sort_order)"
+      "id, day_of_week, name, sort_order, exercises(id, name, target_sets, target_reps, target_weight_kg, target_rir, target_rest_seconds, notes, sort_order)"
     )
     .eq("weekly_plan_id", params.planId)
     .order("sort_order")

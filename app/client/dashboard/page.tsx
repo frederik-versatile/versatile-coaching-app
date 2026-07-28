@@ -26,7 +26,7 @@ export default async function ClientDashboard() {
   const { data: plans } = await supabase
     .from("weekly_plans")
     .select(
-      "id, week_start, notes, workouts(id, day_of_week, name, sort_order, exercises(id, name, target_sets, target_reps, target_weight_kg, notes, sort_order))"
+      "id, week_start, notes, workouts(id, day_of_week, name, sort_order, exercises(id, name, target_sets, target_reps, target_weight_kg, target_rir, target_rest_seconds, notes, sort_order))"
     )
     .eq("client_id", user.id)
     .order("week_start", { ascending: false });

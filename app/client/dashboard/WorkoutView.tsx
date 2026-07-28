@@ -72,6 +72,10 @@ export default function WorkoutView({
                     exercise.target_weight_kg
                       ? `${exercise.target_weight_kg} kg`
                       : null,
+                    exercise.target_rir !== null ? `RIR ${exercise.target_rir}` : null,
+                    exercise.target_rest_seconds
+                      ? `${exercise.target_rest_seconds}s rest`
+                      : null,
                   ]
                     .filter(Boolean)
                     .join("  ·  ") || "No targets set"}

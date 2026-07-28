@@ -85,6 +85,12 @@ export async function createExercise(formData: FormData) {
   const targetWeightKg = formData.get("target_weight_kg")
     ? Number(formData.get("target_weight_kg"))
     : null;
+  const targetRir = formData.get("target_rir")
+    ? Number(formData.get("target_rir"))
+    : null;
+  const targetRestSeconds = formData.get("target_rest_seconds")
+    ? Number(formData.get("target_rest_seconds"))
+    : null;
   const notes = (formData.get("notes") as string) || null;
 
   const { supabase } = await requireUser();
@@ -100,6 +106,8 @@ export async function createExercise(formData: FormData) {
     target_sets: targetSets,
     target_reps: targetReps,
     target_weight_kg: targetWeightKg,
+    target_rir: targetRir,
+    target_rest_seconds: targetRestSeconds,
     notes,
     sort_order: count ?? 0,
   });
@@ -119,6 +127,12 @@ export async function updateExercise(formData: FormData) {
   const targetWeightKg = formData.get("target_weight_kg")
     ? Number(formData.get("target_weight_kg"))
     : null;
+  const targetRir = formData.get("target_rir")
+    ? Number(formData.get("target_rir"))
+    : null;
+  const targetRestSeconds = formData.get("target_rest_seconds")
+    ? Number(formData.get("target_rest_seconds"))
+    : null;
   const notes = (formData.get("notes") as string) || null;
 
   const { supabase } = await requireUser();
@@ -130,6 +144,8 @@ export async function updateExercise(formData: FormData) {
       target_sets: targetSets,
       target_reps: targetReps,
       target_weight_kg: targetWeightKg,
+      target_rir: targetRir,
+      target_rest_seconds: targetRestSeconds,
       notes,
     })
     .eq("id", exerciseId);

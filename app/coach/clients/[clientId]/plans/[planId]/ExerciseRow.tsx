@@ -9,6 +9,8 @@ type Exercise = {
   target_sets: number | null;
   target_reps: string | null;
   target_weight_kg: number | null;
+  target_rir: number | null;
+  target_rest_seconds: number | null;
   notes: string | null;
 };
 
@@ -45,7 +47,7 @@ export default function ExerciseRow({
             className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
           />
         </div>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
           <div className="space-y-1">
             <label className="block text-caption text-charcoal">Sets</label>
             <input
@@ -73,6 +75,27 @@ export default function ExerciseRow({
               step="0.5"
               min={0}
               defaultValue={exercise.target_weight_kg ?? ""}
+              className="w-full rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="block text-caption text-charcoal">RIR</label>
+            <input
+              name="target_rir"
+              type="number"
+              min={0}
+              defaultValue={exercise.target_rir ?? ""}
+              className="w-full rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="block text-caption text-charcoal">Rest (sec)</label>
+            <input
+              name="target_rest_seconds"
+              type="number"
+              min={0}
+              step="5"
+              defaultValue={exercise.target_rest_seconds ?? ""}
               className="w-full rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
             />
           </div>
@@ -114,6 +137,8 @@ export default function ExerciseRow({
             exercise.target_sets ? `${exercise.target_sets} sets` : null,
             exercise.target_reps ? `${exercise.target_reps} reps` : null,
             exercise.target_weight_kg ? `${exercise.target_weight_kg} kg` : null,
+            exercise.target_rir !== null ? `RIR ${exercise.target_rir}` : null,
+            exercise.target_rest_seconds ? `${exercise.target_rest_seconds}s rest` : null,
           ]
             .filter(Boolean)
             .join("  ·  ") || "No targets set"}

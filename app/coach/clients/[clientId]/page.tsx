@@ -42,7 +42,7 @@ export default async function ClientDetailPage({
       ? await supabase
           .from("workouts")
           .select(
-            "id, day_of_week, name, sort_order, weekly_plan_id, exercises(id, name, target_sets, target_reps, target_weight_kg, notes, sort_order)"
+            "id, day_of_week, name, sort_order, weekly_plan_id, exercises(id, name, target_sets, target_reps, target_weight_kg, target_rir, target_rest_seconds, notes, sort_order)"
           )
           .in("weekly_plan_id", planIds)
           .order("sort_order")
