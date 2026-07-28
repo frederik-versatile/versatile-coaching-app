@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { DAY_LABELS } from "@/lib/days";
+import { computeDayStates } from "@/components/WeekStrip";
 import WorkoutCard from "./WorkoutCard";
 import AddWorkoutForm from "./AddWorkoutForm";
 import PlanHeader from "./PlanHeader";
@@ -43,20 +44,25 @@ export default async function WeeklyPlanPage({
     .order("sort_order", { referencedTable: "exercises" });
 
   const workoutIds = (workouts || []).map((w) => w.id);
-  const { count: workoutLogCount } =
+  const { data: workoutLogs, count: workoutLogCount } =
     workoutIds.length > 0
       ? await supabase
           .from("workout_logs")
-          .select("id", { count: "exact", head: true })
+          .select("id, workout_id, status", { count: "exact" })
           .in("workout_id", workoutIds)
-      : { count: 0 };
+      : { data: [], count: 0 };
+
+  const logsByWorkoutId = Object.fromEntries(
+    (workoutLogs || []).map((log) => [log.workout_id, log])
+  );
+  const dayStates = computeDayStates(workouts || [], logsByWorkoutId);
 
   return (
     <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-4 py-12">
-      <div className="space-y-2">
+      <div className="space-y-3">
         <Link
           href={`/coach/clients/${params.clientId}`}
-          className="text-sm text-accent hover:underline"
+          className="text-body-sm text-accent hover:underline"
         >
           ← Back to {client.full_name || "client"}
         </Link>
@@ -66,6 +72,7 @@ export default async function WeeklyPlanPage({
           weekStart={plan.week_start}
           notes={plan.notes}
           workoutLogCount={workoutLogCount ?? 0}
+          dayStates={dayStates}
         />
       </div>
 
@@ -77,7 +84,7 @@ export default async function WeeklyPlanPage({
 
           return (
             <div key={label} className="space-y-3">
-              <h2 className="font-medium text-ink">{label}</h2>
+              <h2 className="font-display text-display-sm text-ink">{label}</h2>
 
               {dayWorkouts.map((workout) => (
                 <WorkoutCard

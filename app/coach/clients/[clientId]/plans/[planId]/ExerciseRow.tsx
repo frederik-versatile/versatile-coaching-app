@@ -30,7 +30,7 @@ export default function ExerciseRow({
           await updateExercise(formData);
           setIsEditing(false);
         }}
-        className="space-y-2 rounded-md border border-accent bg-background p-3"
+        className="space-y-2 rounded border border-accent bg-background p-3"
       >
         <input type="hidden" name="client_id" value={clientId} />
         <input type="hidden" name="plan_id" value={planId} />
@@ -41,7 +41,7 @@ export default function ExerciseRow({
           defaultValue={exercise.name}
           required
           placeholder="Exercise name"
-          className="w-full rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+          className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
         />
         <div className="grid grid-cols-3 gap-2">
           <input
@@ -50,13 +50,13 @@ export default function ExerciseRow({
             min={0}
             defaultValue={exercise.target_sets ?? ""}
             placeholder="Sets"
-            className="rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+            className="rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
           />
           <input
             name="target_reps"
             defaultValue={exercise.target_reps ?? ""}
             placeholder="Reps (e.g. 8-10)"
-            className="rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+            className="rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
           />
           <input
             name="target_weight_kg"
@@ -65,7 +65,7 @@ export default function ExerciseRow({
             min={0}
             defaultValue={exercise.target_weight_kg ?? ""}
             placeholder="Weight (kg)"
-            className="rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+            className="rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
           />
         </div>
         <textarea
@@ -73,19 +73,19 @@ export default function ExerciseRow({
           defaultValue={exercise.notes ?? ""}
           placeholder="Notes"
           rows={1}
-          className="w-full rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+          className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
         />
         <div className="flex gap-2">
           <button
             type="submit"
-            className="rounded-md bg-accent px-3 py-1 text-sm font-medium text-white hover:opacity-90"
+            className="rounded bg-accent px-3 py-1 text-body-sm font-medium text-white transition-colors hover:opacity-90"
           >
-            Save
+            Save changes
           </button>
           <button
             type="button"
             onClick={() => setIsEditing(false)}
-            className="rounded-md border border-neutral px-3 py-1 text-sm text-ink hover:bg-white"
+            className="rounded border border-neutral px-3 py-1 text-body-sm text-ink transition-colors hover:bg-background"
           >
             Cancel
           </button>
@@ -95,27 +95,27 @@ export default function ExerciseRow({
   }
 
   return (
-    <div className="flex items-start justify-between gap-2 rounded-md border border-neutral bg-white px-3 py-2">
+    <div className="flex items-start justify-between gap-2 rounded border border-neutral bg-white px-3 py-2">
       <div>
-        <p className="text-sm font-medium text-ink">{exercise.name}</p>
-        <p className="text-xs text-charcoal">
+        <p className="text-body-sm font-medium text-ink">{exercise.name}</p>
+        <p className="font-mono text-data tabular-nums text-charcoal">
           {[
             exercise.target_sets ? `${exercise.target_sets} sets` : null,
             exercise.target_reps ? `${exercise.target_reps} reps` : null,
             exercise.target_weight_kg ? `${exercise.target_weight_kg} kg` : null,
           ]
             .filter(Boolean)
-            .join(" · ") || "No targets set"}
+            .join("  ·  ") || "No targets set"}
         </p>
         {exercise.notes && (
-          <p className="mt-1 text-xs text-charcoal">{exercise.notes}</p>
+          <p className="mt-1 text-caption text-charcoal">{exercise.notes}</p>
         )}
       </div>
       <div className="flex shrink-0 gap-2">
         <button
           type="button"
           onClick={() => setIsEditing(true)}
-          className="text-xs text-accent hover:underline"
+          className="text-caption text-accent hover:underline"
         >
           Edit
         </button>
@@ -128,8 +128,8 @@ export default function ExerciseRow({
           <input type="hidden" name="client_id" value={clientId} />
           <input type="hidden" name="plan_id" value={planId} />
           <input type="hidden" name="exercise_id" value={exercise.id} />
-          <button type="submit" className="text-xs text-red-700 hover:underline">
-            Delete
+          <button type="submit" className="text-caption text-warning hover:underline">
+            Delete exercise
           </button>
         </form>
       </div>

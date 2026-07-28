@@ -91,14 +91,14 @@ export default async function ClientDashboard() {
 
   return (
     <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-8 px-4 py-12">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-ink">
-          Client Dashboard — logged in as {profile?.full_name || user.email}
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="font-display text-display-lg text-ink">
+          {profile?.full_name || user.email}
         </h1>
         <form action={signOut}>
           <button
             type="submit"
-            className="rounded-md border border-neutral px-4 py-2 text-ink hover:bg-white"
+            className="rounded border border-neutral px-4 py-2 text-body-sm text-ink transition-colors hover:bg-background"
           >
             Sign out
           </button>
@@ -106,10 +106,12 @@ export default async function ClientDashboard() {
       </div>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-medium text-ink">Your weekly plans</h2>
+        <h2 className="font-display text-display-sm text-ink">Your weekly plans</h2>
 
         {sortedPlans.length === 0 ? (
-          <p className="text-charcoal">No weekly plans yet.</p>
+          <p className="text-body text-charcoal">
+            No weekly plans yet — your coach will build one for you here.
+          </p>
         ) : (
           <div className="space-y-3">
             {sortedPlans.map((plan, i) => (
@@ -134,7 +136,7 @@ export default async function ClientDashboard() {
       />
 
       <section className="space-y-3">
-        <h2 className="text-lg font-medium text-ink">Progress photos</h2>
+        <h2 className="font-display text-display-sm text-ink">Progress photos</h2>
         <PhotoUploadForm clientId={user.id} />
         <PhotoGallery photos={photos} />
       </section>

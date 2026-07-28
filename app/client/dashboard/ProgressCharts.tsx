@@ -20,6 +20,7 @@ const RANGES = [30, 90, 180, 365] as const;
 const ACCENT = "#EC5E2A";
 const CHARCOAL = "#5D5D5D";
 const NEUTRAL = "#C4C4C4";
+const MONO_FONT = "var(--font-mono), monospace";
 
 function ChartBlock({
   title,
@@ -32,19 +33,22 @@ function ChartBlock({
 }) {
   return (
     <div className="space-y-2">
-      <h3 className="text-sm font-medium text-charcoal">{title}</h3>
+      <h3 className="text-body-sm font-medium text-charcoal">{title}</h3>
       {data.length === 0 ? (
-        <p className="flex h-48 items-center justify-center rounded-md border border-dashed border-neutral text-sm text-charcoal">
-          No data for this period yet.
+        <p className="flex h-48 items-center justify-center rounded border border-dashed border-neutral px-4 text-center text-body-sm text-charcoal">
+          No data logged in this period yet — try a wider range or log a new entry.
         </p>
       ) : (
-        <div className="h-48 rounded-md border border-neutral bg-white p-2">
+        <div className="h-48 rounded border border-neutral bg-white p-2">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
               <CartesianGrid stroke={NEUTRAL} strokeDasharray="3 3" />
-              <XAxis dataKey="logDate" tick={{ fontSize: 11, fill: CHARCOAL }} />
+              <XAxis
+                dataKey="logDate"
+                tick={{ fontSize: 11, fill: CHARCOAL, fontFamily: MONO_FONT }}
+              />
               <YAxis
-                tick={{ fontSize: 11, fill: CHARCOAL }}
+                tick={{ fontSize: 11, fill: CHARCOAL, fontFamily: MONO_FONT }}
                 width={48}
                 unit={unit}
               />
@@ -85,16 +89,16 @@ export default function ProgressCharts({ clientId }: { clientId: string }) {
   }, [clientId, days]);
 
   return (
-    <div className="space-y-4 rounded-lg border border-neutral bg-background p-4">
+    <div className="space-y-4 rounded border border-neutral bg-background p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-lg font-medium text-ink">Progress</h2>
+        <h2 className="font-display text-display-sm text-ink">Progress</h2>
         <div className="flex gap-1">
           {RANGES.map((r) => (
             <button
               key={r}
               type="button"
               onClick={() => setDays(r)}
-              className={`rounded-md px-3 py-1 text-sm ${
+              className={`rounded px-3 py-1 font-mono text-data tabular-nums transition-colors ${
                 days === r
                   ? "bg-accent text-white"
                   : "border border-neutral bg-white text-ink hover:bg-background"
@@ -107,7 +111,7 @@ export default function ProgressCharts({ clientId }: { clientId: string }) {
       </div>
 
       {loading ? (
-        <p className="text-sm text-charcoal">Loading…</p>
+        <p className="text-body-sm text-charcoal">Loading…</p>
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <ChartBlock title="Weight (kg)" unit="kg" data={weight} />

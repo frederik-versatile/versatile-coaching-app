@@ -84,14 +84,14 @@ export default async function CoachDashboard({
 
   return (
     <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-8 px-4 py-12">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-ink">
-          Coach Dashboard — logged in as {profile?.full_name || user.email}
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="font-display text-display-lg text-ink">
+          {profile?.full_name || user.email}
         </h1>
         <form action={signOut}>
           <button
             type="submit"
-            className="rounded-md border border-neutral px-4 py-2 text-ink hover:bg-white"
+            className="rounded border border-neutral px-4 py-2 text-body-sm text-ink transition-colors hover:bg-background"
           >
             Sign out
           </button>
@@ -99,38 +99,40 @@ export default async function CoachDashboard({
       </div>
 
       {searchParams.error && (
-        <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p className="rounded border border-warning/30 bg-warning/10 px-3 py-2 text-body-sm text-warning">
           {searchParams.error}
         </p>
       )}
       {searchParams.success && (
-        <p className="rounded-md bg-green-50 px-3 py-2 text-sm text-green-700">
+        <p className="rounded border border-success/30 bg-success/10 px-3 py-2 text-body-sm text-success">
           {searchParams.success}
         </p>
       )}
 
       <section className="space-y-3">
-        <h2 className="text-lg font-medium text-ink">Your clients</h2>
+        <h2 className="font-display text-display-sm text-ink">Your clients</h2>
 
         {!clients || clients.length === 0 ? (
-          <p className="text-charcoal">No clients yet — invite one below.</p>
+          <p className="text-body text-charcoal">
+            No clients yet — invite one below to get started.
+          </p>
         ) : (
-          <ul className="divide-y divide-neutral rounded-lg border border-neutral bg-white">
+          <ul className="divide-y divide-neutral rounded border border-neutral bg-white">
             {clients.map((client) => (
               <li key={client.id}>
                 <Link
                   href={`/coach/clients/${client.id}`}
-                  className="flex items-center justify-between px-4 py-3 hover:bg-background"
+                  className="flex items-center justify-between px-4 py-3 transition-colors hover:bg-background"
                 >
                   <span>
-                    <span className="block text-ink">
+                    <span className="block text-body text-ink">
                       {client.full_name || "Unnamed client"}
                     </span>
-                    <span className="block text-xs text-charcoal">
+                    <span className="block text-caption text-charcoal">
                       {client.email}
                     </span>
                   </span>
-                  <span className="text-sm text-charcoal">
+                  <span className="text-body-sm text-charcoal">
                     {formatLastActive(lastActiveByClient.get(client.id) ?? null)}
                   </span>
                 </Link>
@@ -140,11 +142,11 @@ export default async function CoachDashboard({
         )}
       </section>
 
-      <section className="space-y-3 rounded-lg border border-neutral bg-white p-4">
-        <h2 className="text-lg font-medium text-ink">Add client</h2>
+      <section className="space-y-3 rounded border border-neutral bg-white p-4">
+        <h2 className="font-display text-display-sm text-ink">Add client</h2>
         <form action={inviteClient} className="space-y-3">
           <div className="space-y-1">
-            <label htmlFor="full_name" className="block text-sm text-charcoal">
+            <label htmlFor="full_name" className="block text-body-sm text-charcoal">
               Full name
             </label>
             <input
@@ -152,11 +154,11 @@ export default async function CoachDashboard({
               name="full_name"
               type="text"
               required
-              className="w-full rounded-md border border-neutral px-3 py-2 text-ink focus:border-accent focus:outline-none"
+              className="w-full rounded border border-neutral px-3 py-2 text-body text-ink focus:border-accent"
             />
           </div>
           <div className="space-y-1">
-            <label htmlFor="email" className="block text-sm text-charcoal">
+            <label htmlFor="email" className="block text-body-sm text-charcoal">
               Email
             </label>
             <input
@@ -164,12 +166,12 @@ export default async function CoachDashboard({
               name="email"
               type="email"
               required
-              className="w-full rounded-md border border-neutral px-3 py-2 text-ink focus:border-accent focus:outline-none"
+              className="w-full rounded border border-neutral px-3 py-2 text-body text-ink focus:border-accent"
             />
           </div>
           <button
             type="submit"
-            className="rounded-md bg-accent px-4 py-2 font-medium text-white hover:opacity-90"
+            className="rounded bg-accent px-4 py-2 text-body font-medium text-white transition-colors hover:opacity-90"
           >
             Send invite
           </button>

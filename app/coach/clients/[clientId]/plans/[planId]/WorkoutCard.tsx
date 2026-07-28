@@ -34,7 +34,7 @@ export default function WorkoutCard({
   const [showAddExercise, setShowAddExercise] = useState(false);
 
   return (
-    <div className="space-y-2 rounded-lg border border-neutral bg-white p-3">
+    <div className="space-y-2 rounded border border-neutral bg-white p-3">
       {isEditing ? (
         <form
           action={async (formData) => {
@@ -51,12 +51,12 @@ export default function WorkoutCard({
             name="name"
             defaultValue={workout.name}
             required
-            className="w-full rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+            className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
           />
           <select
             name="day_of_week"
             defaultValue={workout.day_of_week}
-            className="w-full rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+            className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
           >
             {DAY_LABELS.map((label, i) => (
               <option key={label} value={i}>
@@ -67,14 +67,14 @@ export default function WorkoutCard({
           <div className="flex gap-2">
             <button
               type="submit"
-              className="rounded-md bg-accent px-3 py-1 text-sm font-medium text-white hover:opacity-90"
+              className="rounded bg-accent px-3 py-1 text-body-sm font-medium text-white transition-colors hover:opacity-90"
             >
-              Save
+              Save changes
             </button>
             <button
               type="button"
               onClick={() => setIsEditing(false)}
-              className="rounded-md border border-neutral px-3 py-1 text-sm text-ink hover:bg-white"
+              className="rounded border border-neutral px-3 py-1 text-body-sm text-ink transition-colors hover:bg-background"
             >
               Cancel
             </button>
@@ -82,12 +82,12 @@ export default function WorkoutCard({
         </form>
       ) : (
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-medium text-ink">{workout.name}</h3>
+          <h3 className="font-display text-display-sm text-ink">{workout.name}</h3>
           <div className="flex shrink-0 gap-2">
             <button
               type="button"
               onClick={() => setIsEditing(true)}
-              className="text-xs text-accent hover:underline"
+              className="text-caption text-accent hover:underline"
             >
               Edit
             </button>
@@ -105,8 +105,8 @@ export default function WorkoutCard({
               <input type="hidden" name="client_id" value={clientId} />
               <input type="hidden" name="plan_id" value={planId} />
               <input type="hidden" name="workout_id" value={workout.id} />
-              <button type="submit" className="text-xs text-red-700 hover:underline">
-                Delete
+              <button type="submit" className="text-caption text-warning hover:underline">
+                Delete workout
               </button>
             </form>
           </div>
@@ -130,7 +130,7 @@ export default function WorkoutCard({
             await createExercise(formData);
             setShowAddExercise(false);
           }}
-          className="space-y-2 rounded-md border border-dashed border-neutral p-3"
+          className="space-y-2 rounded border border-dashed border-neutral p-3"
         >
           <input type="hidden" name="client_id" value={clientId} />
           <input type="hidden" name="plan_id" value={planId} />
@@ -140,7 +140,7 @@ export default function WorkoutCard({
             name="name"
             required
             placeholder="Exercise name"
-            className="w-full rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+            className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
           />
           <div className="grid grid-cols-3 gap-2">
             <input
@@ -148,12 +148,12 @@ export default function WorkoutCard({
               type="number"
               min={0}
               placeholder="Sets"
-              className="rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+              className="rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
             />
             <input
               name="target_reps"
               placeholder="Reps (e.g. 8-10)"
-              className="rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+              className="rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
             />
             <input
               name="target_weight_kg"
@@ -161,26 +161,26 @@ export default function WorkoutCard({
               step="0.5"
               min={0}
               placeholder="Weight (kg)"
-              className="rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+              className="rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
             />
           </div>
           <textarea
             name="notes"
             placeholder="Notes"
             rows={1}
-            className="w-full rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+            className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
           />
           <div className="flex gap-2">
             <button
               type="submit"
-              className="rounded-md bg-accent px-3 py-1 text-sm font-medium text-white hover:opacity-90"
+              className="rounded bg-accent px-3 py-1 text-body-sm font-medium text-white transition-colors hover:opacity-90"
             >
               Add exercise
             </button>
             <button
               type="button"
               onClick={() => setShowAddExercise(false)}
-              className="rounded-md border border-neutral px-3 py-1 text-sm text-ink hover:bg-white"
+              className="rounded border border-neutral px-3 py-1 text-body-sm text-ink transition-colors hover:bg-background"
             >
               Cancel
             </button>
@@ -190,7 +190,7 @@ export default function WorkoutCard({
         <button
           type="button"
           onClick={() => setShowAddExercise(true)}
-          className="text-sm text-accent hover:underline"
+          className="text-body-sm text-accent hover:underline"
         >
           + Add exercise
         </button>

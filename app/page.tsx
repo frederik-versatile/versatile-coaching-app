@@ -21,13 +21,13 @@ export default async function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-6 px-4 text-center">
-      <h1 className="text-3xl font-semibold text-ink">Versatile Coaching</h1>
-      <p className="max-w-md text-charcoal">
+      <h1 className="font-display text-display-xl text-ink">Versatile Coaching</h1>
+      <p className="max-w-md text-body text-charcoal">
         Training plans and progress tracking for coaches and clients.
       </p>
       <Link
         href="/login"
-        className="rounded-md bg-accent px-5 py-2 font-medium text-white hover:opacity-90"
+        className="rounded bg-accent px-5 py-2 text-body font-medium text-white transition-colors hover:opacity-90"
       >
         Log in
       </Link>

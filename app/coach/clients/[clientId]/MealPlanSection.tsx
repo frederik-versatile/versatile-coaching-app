@@ -63,14 +63,14 @@ function MealPlanForm({
   }
 
   return (
-    <div className="space-y-3 rounded-md border border-accent bg-background p-3">
+    <div className="space-y-3 rounded border border-accent bg-background p-3">
       <div className="space-y-1">
-        <label className="block text-xs text-charcoal">Effective date</label>
+        <label className="block text-caption text-charcoal">Effective date</label>
         <input
           type="date"
           value={effectiveDate}
           onChange={(e) => setEffectiveDate(e.target.value)}
-          className="rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+          className="rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
         />
       </div>
 
@@ -78,20 +78,20 @@ function MealPlanForm({
         {blocks.map((block, i) => (
           <div
             key={i}
-            className="space-y-1 rounded-md border border-neutral bg-white p-2"
+            className="space-y-1 rounded border border-neutral bg-white p-2"
           >
             <div className="flex items-center gap-2">
               <input
                 value={block.label}
                 onChange={(e) => updateBlock(i, "label", e.target.value)}
                 placeholder="Label (e.g. Breakfast)"
-                className="flex-1 rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+                className="flex-1 rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
               />
               <button
                 type="button"
                 onClick={() => moveBlock(i, -1)}
                 disabled={i === 0}
-                className="text-xs text-charcoal disabled:opacity-30"
+                className="text-caption text-charcoal disabled:opacity-30"
               >
                 ↑
               </button>
@@ -99,14 +99,14 @@ function MealPlanForm({
                 type="button"
                 onClick={() => moveBlock(i, 1)}
                 disabled={i === blocks.length - 1}
-                className="text-xs text-charcoal disabled:opacity-30"
+                className="text-caption text-charcoal disabled:opacity-30"
               >
                 ↓
               </button>
               <button
                 type="button"
                 onClick={() => removeBlock(i)}
-                className="text-xs text-red-700 hover:underline"
+                className="text-caption text-warning hover:underline"
               >
                 Remove
               </button>
@@ -116,7 +116,7 @@ function MealPlanForm({
               onChange={(e) => updateBlock(i, "description", e.target.value)}
               placeholder="Description"
               rows={2}
-              className="w-full rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+              className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
             />
           </div>
         ))}
@@ -125,7 +125,7 @@ function MealPlanForm({
       <button
         type="button"
         onClick={addBlock}
-        className="text-sm text-accent hover:underline"
+        className="text-body-sm text-accent hover:underline"
       >
         + Add meal block
       </button>
@@ -135,14 +135,14 @@ function MealPlanForm({
           type="button"
           disabled={saving}
           onClick={handleSave}
-          className="rounded-md bg-accent px-3 py-1 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+          className="rounded bg-accent px-3 py-1 text-body-sm font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50"
         >
-          {saving ? "Saving…" : "Save"}
+          {saving ? "Saving…" : "Save changes"}
         </button>
         <button
           type="button"
           onClick={onDone}
-          className="rounded-md border border-neutral px-3 py-1 text-sm text-ink hover:bg-white"
+          className="rounded border border-neutral px-3 py-1 text-body-sm text-ink transition-colors hover:bg-background"
         >
           Cancel
         </button>
@@ -163,18 +163,20 @@ export default function MealPlanSection({
   const [editingId, setEditingId] = useState<string | null>(null);
 
   return (
-    <div className="space-y-3 rounded-lg border border-neutral bg-white p-4">
-      <h3 className="font-medium text-ink">Meal plan</h3>
+    <div className="space-y-3 rounded border border-neutral bg-white p-4">
+      <h3 className="font-display text-display-sm text-ink">Meal plan</h3>
 
       {current ? (
-        <div className="rounded-md bg-background px-3 py-2">
-          <p className="text-sm font-medium text-ink">
+        <div className="rounded bg-background px-3 py-2">
+          <p className="text-body-sm font-medium text-ink">
             Current (since {current.effective_date})
           </p>
           <MealBlocksView blocks={current.content} />
         </div>
       ) : (
-        <p className="text-charcoal">No meal plan set yet.</p>
+        <p className="text-body text-charcoal">
+          No meal plan yet — set one below.
+        </p>
       )}
 
       {showForm ? (
@@ -183,7 +185,7 @@ export default function MealPlanSection({
         <button
           type="button"
           onClick={() => setShowForm(true)}
-          className="text-sm text-accent hover:underline"
+          className="text-body-sm text-accent hover:underline"
         >
           + Set new meal plan
         </button>
@@ -191,7 +193,7 @@ export default function MealPlanSection({
 
       {mealPlans.length > 0 && (
         <div className="space-y-2">
-          <p className="text-sm font-medium text-charcoal">History</p>
+          <p className="text-body-sm font-medium text-charcoal">History</p>
           <ul className="space-y-2">
             {mealPlans.map((row) =>
               editingId === row.id ? (
@@ -205,11 +207,13 @@ export default function MealPlanSection({
               ) : (
                 <li
                   key={row.id}
-                  className="rounded-md border border-neutral p-3 text-sm"
+                  className="rounded border border-neutral p-3 text-body-sm"
                 >
                   <div className="flex items-center justify-between">
                     <span>
-                      {row.effective_date}
+                      <span className="font-mono tabular-nums">
+                        {row.effective_date}
+                      </span>
                       {current?.id === row.id && (
                         <span className="ml-2 text-accent">(current)</span>
                       )}
@@ -232,7 +236,7 @@ export default function MealPlanSection({
                             await deleteMealPlan({ id: row.id, clientId });
                           }
                         }}
-                        className="text-red-700 hover:underline"
+                        className="text-warning hover:underline"
                       >
                         Delete
                       </button>

@@ -27,11 +27,11 @@ export default function PhotoUploadForm({ clientId }: { clientId: string }) {
     setError(null);
 
     if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-      setError("Please choose a JPEG, PNG, or WebP image.");
+      setError("That file isn't a JPEG, PNG, or WebP image — choose a different file.");
       return;
     }
     if (file.size > MAX_UPLOAD_BYTES) {
-      setError("That file is too large (max 20MB).");
+      setError("That file is over the 20MB limit — choose a smaller one.");
       return;
     }
 
@@ -53,25 +53,25 @@ export default function PhotoUploadForm({ clientId }: { clientId: string }) {
 
       await createProgressPhoto({ storagePath: path, takenDate });
     } catch {
-      setError("That file could not be read as an image.");
+      setError("That file couldn't be read as an image — try a different one.");
     } finally {
       setUploading(false);
     }
   }
 
   return (
-    <div className="space-y-3 rounded-lg border border-neutral bg-white p-4">
-      <h2 className="text-lg font-medium text-ink">Upload a progress photo</h2>
+    <div className="space-y-3 rounded border border-neutral bg-white p-4">
+      <h2 className="font-display text-display-sm text-ink">Upload a progress photo</h2>
 
       {error && (
-        <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p className="rounded border border-warning/30 bg-warning/10 px-3 py-2 text-body-sm text-warning">
           {error}
         </p>
       )}
 
       <div className="flex flex-wrap items-end gap-3">
         <div className="space-y-1">
-          <label htmlFor="taken_date" className="block text-sm text-charcoal">
+          <label htmlFor="taken_date" className="block text-body-sm text-charcoal">
             Date taken
           </label>
           <input
@@ -79,12 +79,12 @@ export default function PhotoUploadForm({ clientId }: { clientId: string }) {
             type="date"
             value={takenDate}
             onChange={(e) => setTakenDate(e.target.value)}
-            className="rounded-md border border-neutral px-3 py-2 text-ink focus:border-accent focus:outline-none"
+            className="rounded border border-neutral px-3 py-2 font-mono text-data tabular-nums text-ink focus:border-accent"
           />
         </div>
 
         <div className="space-y-1">
-          <label htmlFor="photo_file" className="block text-sm text-charcoal">
+          <label htmlFor="photo_file" className="block text-body-sm text-charcoal">
             Photo
           </label>
           <input
@@ -93,11 +93,11 @@ export default function PhotoUploadForm({ clientId }: { clientId: string }) {
             accept="image/jpeg,image/png,image/webp"
             disabled={uploading}
             onChange={handleFileChange}
-            className="text-sm text-ink"
+            className="text-body-sm text-ink"
           />
         </div>
 
-        {uploading && <span className="text-sm text-charcoal">Uploading…</span>}
+        {uploading && <span className="text-body-sm text-charcoal">Uploading…</span>}
       </div>
     </div>
   );

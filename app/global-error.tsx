@@ -14,12 +14,12 @@ export default function GlobalError({
 
   return (
     <html>
-      <body>
+      <body className="bg-background font-body text-body">
         <main className="flex min-h-screen items-center justify-center px-4 text-center">
           <div className="space-y-2">
-            <h1 className="text-xl font-semibold text-ink">Something went wrong</h1>
-            <p className="text-charcoal">
-              This has been reported. Please try again.
+            <h1 className="font-display text-display text-ink">This page hit an error</h1>
+            <p className="text-body text-charcoal">
+              It&apos;s been reported. Reload the page, or try again in a moment.
             </p>
           </div>
         </main>

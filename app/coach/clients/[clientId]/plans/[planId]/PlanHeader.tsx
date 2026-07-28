@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import WeekStrip, { type DayState } from "@/components/WeekStrip";
 import { updateWeeklyPlan, deleteWeeklyPlan } from "../../actions";
 
 export default function PlanHeader({
@@ -9,12 +10,14 @@ export default function PlanHeader({
   weekStart,
   notes,
   workoutLogCount,
+  dayStates,
 }: {
   clientId: string;
   planId: string;
   weekStart: string;
   notes: string | null;
   workoutLogCount: number;
+  dayStates: DayState[];
 }) {
   const [editing, setEditing] = useState(false);
   const [weekStartValue, setWeekStartValue] = useState(weekStart);
@@ -50,23 +53,23 @@ export default function PlanHeader({
 
   if (editing) {
     return (
-      <div className="space-y-3 rounded-lg border border-accent bg-white p-4">
+      <div className="space-y-3 rounded border border-accent bg-white p-4">
         <div className="space-y-1">
-          <label className="block text-sm text-charcoal">Week start</label>
+          <label className="block text-body-sm text-charcoal">Week start</label>
           <input
             type="date"
             value={weekStartValue}
             onChange={(e) => setWeekStartValue(e.target.value)}
-            className="rounded-md border border-neutral px-3 py-2 text-ink focus:border-accent focus:outline-none"
+            className="rounded border border-neutral px-3 py-2 text-body text-ink focus:border-accent"
           />
         </div>
         <div className="space-y-1">
-          <label className="block text-sm text-charcoal">Notes</label>
+          <label className="block text-body-sm text-charcoal">Notes</label>
           <textarea
             value={notesValue}
             onChange={(e) => setNotesValue(e.target.value)}
             rows={2}
-            className="w-full rounded-md border border-neutral px-3 py-2 text-ink focus:border-accent focus:outline-none"
+            className="w-full rounded border border-neutral px-3 py-2 text-body text-ink focus:border-accent"
           />
         </div>
         <div className="flex gap-2">
@@ -74,14 +77,14 @@ export default function PlanHeader({
             type="button"
             disabled={saving}
             onClick={handleSave}
-            className="rounded-md bg-accent px-4 py-2 font-medium text-white hover:opacity-90 disabled:opacity-50"
+            className="rounded bg-accent px-4 py-2 text-body font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50"
           >
-            {saving ? "Saving…" : "Save"}
+            {saving ? "Saving…" : "Save changes"}
           </button>
           <button
             type="button"
             onClick={() => setEditing(false)}
-            className="rounded-md border border-neutral px-4 py-2 text-ink hover:bg-background"
+            className="rounded border border-neutral px-4 py-2 text-body text-ink transition-colors hover:bg-background"
           >
             Cancel
           </button>
@@ -92,15 +95,18 @@ export default function PlanHeader({
 
   return (
     <div className="flex items-start justify-between gap-4">
-      <div>
-        <h1 className="text-2xl font-semibold text-ink">Week of {weekStart}</h1>
-        {notes && <p className="text-charcoal">{notes}</p>}
+      <div className="flex-1 space-y-3">
+        <div>
+          <h1 className="font-display text-display-lg text-ink">Week of {weekStart}</h1>
+          {notes && <p className="text-body text-charcoal">{notes}</p>}
+        </div>
+        <WeekStrip states={dayStates} className="max-w-sm" />
       </div>
       <div className="flex shrink-0 gap-3">
         <button
           type="button"
           onClick={() => setEditing(true)}
-          className="text-sm text-accent hover:underline"
+          className="text-body-sm text-accent hover:underline"
         >
           Edit
         </button>
@@ -108,7 +114,7 @@ export default function PlanHeader({
           type="button"
           disabled={deleting}
           onClick={handleDelete}
-          className="text-sm text-red-700 hover:underline disabled:opacity-50"
+          className="text-body-sm text-warning hover:underline disabled:opacity-50"
         >
           {deleting ? "Deleting…" : "Delete plan"}
         </button>

@@ -6,6 +6,7 @@ import { signPhotoUrls } from "@/lib/photos";
 import { createWeeklyPlan } from "./actions";
 import PhotoGrid from "@/app/client/dashboard/PhotoGrid";
 import ProgressCharts from "@/app/client/dashboard/ProgressCharts";
+import WeekStrip, { computeDayStates } from "@/components/WeekStrip";
 import MacroSplitSection from "./MacroSplitSection";
 import MealPlanSection from "./MealPlanSection";
 import type { MacroSplit, MealPlan } from "@/lib/nutrition";
@@ -40,6 +41,37 @@ export default async function ClientDetailPage({
     .eq("client_id", params.clientId)
     .order("week_start", { ascending: false });
 
+  const planIds = (plans || []).map((p) => p.id);
+  const { data: allWorkouts } =
+    planIds.length > 0
+      ? await supabase
+          .from("workouts")
+          .select("id, day_of_week, weekly_plan_id")
+          .in("weekly_plan_id", planIds)
+      : { data: [] };
+
+  const workoutIds = (allWorkouts || []).map((w) => w.id);
+  const { data: allLogs } =
+    workoutIds.length > 0
+      ? await supabase
+          .from("workout_logs")
+          .select("workout_id, status")
+          .in("workout_id", workoutIds)
+      : { data: [] };
+
+  const logsByWorkoutId = Object.fromEntries(
+    (allLogs || []).map((log) => [log.workout_id, log])
+  );
+  const dayStatesByPlanId = Object.fromEntries(
+    (plans || []).map((plan) => [
+      plan.id,
+      computeDayStates(
+        (allWorkouts || []).filter((w) => w.weekly_plan_id === plan.id),
+        logsByWorkoutId
+      ),
+    ])
+  );
+
   // RLS ("coaches read linked clients' progress photos") scopes this to
   // exactly the linked client's rows; no delete/upload path exists here.
   const { data: photoRows } = await supabase
@@ -65,38 +97,43 @@ export default async function ClientDetailPage({
   return (
     <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-8 px-4 py-12">
       <div>
-        <Link href="/coach/dashboard" className="text-sm text-accent hover:underline">
+        <Link href="/coach/dashboard" className="text-body-sm text-accent hover:underline">
           ← Back to dashboard
         </Link>
-        <h1 className="mt-2 text-2xl font-semibold text-ink">
+        <h1 className="mt-2 font-display text-display-lg text-ink">
           {client.full_name || "Unnamed client"}
         </h1>
-        <p className="text-sm text-charcoal">{client.email}</p>
+        <p className="text-body-sm text-charcoal">{client.email}</p>
       </div>
 
       {searchParams.error && (
-        <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p className="rounded border border-warning/30 bg-warning/10 px-3 py-2 text-body-sm text-warning">
           {searchParams.error}
         </p>
       )}
 
       <section className="space-y-3">
-        <h2 className="text-lg font-medium text-ink">Weekly plans</h2>
+        <h2 className="font-display text-display-sm text-ink">Weekly plans</h2>
 
         {!plans || plans.length === 0 ? (
-          <p className="text-charcoal">No weekly plans yet.</p>
+          <p className="text-body text-charcoal">
+            No weekly plans yet — build one below to get started.
+          </p>
         ) : (
-          <ul className="divide-y divide-neutral rounded-lg border border-neutral bg-white">
+          <ul className="divide-y divide-neutral rounded border border-neutral bg-white">
             {plans.map((plan) => (
               <li key={plan.id}>
                 <Link
                   href={`/coach/clients/${params.clientId}/plans/${plan.id}`}
-                  className="block px-4 py-3 text-ink hover:bg-background"
+                  className="block space-y-2 px-4 py-3 transition-colors hover:bg-background"
                 >
-                  Week of {plan.week_start}
-                  {plan.notes && (
-                    <span className="block text-sm text-charcoal">{plan.notes}</span>
-                  )}
+                  <span className="text-body text-ink">
+                    Week of {plan.week_start}
+                    {plan.notes && (
+                      <span className="block text-body-sm text-charcoal">{plan.notes}</span>
+                    )}
+                  </span>
+                  <WeekStrip states={dayStatesByPlanId[plan.id]} className="max-w-xs" />
                 </Link>
               </li>
             ))}
@@ -107,12 +144,12 @@ export default async function ClientDetailPage({
       <ProgressCharts clientId={params.clientId} />
 
       <section className="space-y-3">
-        <h2 className="text-lg font-medium text-ink">Progress photos</h2>
-        <PhotoGrid photos={photos} emptyMessage="No photos uploaded yet." />
+        <h2 className="font-display text-display-sm text-ink">Progress photos</h2>
+        <PhotoGrid photos={photos} emptyMessage="No progress photos yet." />
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-medium text-ink">Nutrition</h2>
+        <h2 className="font-display text-display-sm text-ink">Nutrition</h2>
         <MacroSplitSection
           clientId={params.clientId}
           macroSplits={(macroSplits || []) as MacroSplit[]}
@@ -123,13 +160,13 @@ export default async function ClientDetailPage({
         />
       </section>
 
-      <section className="space-y-3 rounded-lg border border-neutral bg-white p-4">
-        <h2 className="text-lg font-medium text-ink">New weekly plan</h2>
+      <section className="space-y-3 rounded border border-neutral bg-white p-4">
+        <h2 className="font-display text-display-sm text-ink">New weekly plan</h2>
         <form action={createWeeklyPlan} className="space-y-3">
           <input type="hidden" name="client_id" value={params.clientId} />
 
           <div className="space-y-1">
-            <label htmlFor="week_start" className="block text-sm text-charcoal">
+            <label htmlFor="week_start" className="block text-body-sm text-charcoal">
               Week start (Monday)
             </label>
             <input
@@ -138,25 +175,25 @@ export default async function ClientDetailPage({
               type="date"
               required
               defaultValue={upcomingMonday()}
-              className="rounded-md border border-neutral px-3 py-2 text-ink focus:border-accent focus:outline-none"
+              className="rounded border border-neutral px-3 py-2 font-mono text-data tabular-nums text-ink focus:border-accent"
             />
           </div>
 
           <div className="space-y-1">
-            <label htmlFor="notes" className="block text-sm text-charcoal">
+            <label htmlFor="notes" className="block text-body-sm text-charcoal">
               Notes (optional)
             </label>
             <textarea
               id="notes"
               name="notes"
               rows={2}
-              className="w-full rounded-md border border-neutral px-3 py-2 text-ink focus:border-accent focus:outline-none"
+              className="w-full rounded border border-neutral px-3 py-2 text-body text-ink focus:border-accent"
             />
           </div>
 
           <button
             type="submit"
-            className="rounded-md bg-accent px-4 py-2 font-medium text-white hover:opacity-90"
+            className="rounded bg-accent px-4 py-2 text-body font-medium text-white transition-colors hover:opacity-90"
           >
             Create weekly plan
           </button>

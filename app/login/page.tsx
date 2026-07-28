@@ -9,18 +9,18 @@ export default function LoginPage({
     <main className="flex min-h-screen items-center justify-center px-4">
       <form
         action={login}
-        className="w-full max-w-sm space-y-4 rounded-lg bg-white p-8 shadow-sm"
+        className="w-full max-w-sm space-y-4 rounded border border-neutral bg-white p-8"
       >
-        <h1 className="text-xl font-semibold text-ink">Log in</h1>
+        <h1 className="font-display text-display text-ink">Log in</h1>
 
         {searchParams.error && (
-          <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+          <p className="rounded border border-warning/30 bg-warning/10 px-3 py-2 text-body-sm text-warning">
             {searchParams.error}
           </p>
         )}
 
         <div className="space-y-1">
-          <label htmlFor="email" className="block text-sm text-charcoal">
+          <label htmlFor="email" className="block text-body-sm text-charcoal">
             Email
           </label>
           <input
@@ -28,12 +28,12 @@ export default function LoginPage({
             name="email"
             type="email"
             required
-            className="w-full rounded-md border border-neutral px-3 py-2 text-ink focus:border-accent focus:outline-none"
+            className="w-full rounded border border-neutral px-3 py-2 text-body text-ink focus:border-accent"
           />
         </div>
 
         <div className="space-y-1">
-          <label htmlFor="password" className="block text-sm text-charcoal">
+          <label htmlFor="password" className="block text-body-sm text-charcoal">
             Password
           </label>
           <input
@@ -42,13 +42,13 @@ export default function LoginPage({
             type="password"
             required
             minLength={6}
-            className="w-full rounded-md border border-neutral px-3 py-2 text-ink focus:border-accent focus:outline-none"
+            className="w-full rounded border border-neutral px-3 py-2 text-body text-ink focus:border-accent"
           />
         </div>
 
         <button
           type="submit"
-          className="w-full rounded-md bg-accent px-4 py-2 font-medium text-white hover:opacity-90"
+          className="w-full rounded bg-accent px-4 py-2 text-body font-medium text-white transition-colors hover:opacity-90"
         >
           Log in
         </button>

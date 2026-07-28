@@ -52,14 +52,14 @@ function MacroSplitForm({
   }
 
   return (
-    <div className="space-y-2 rounded-md border border-accent bg-background p-3">
+    <div className="space-y-2 rounded border border-accent bg-background p-3">
       <div className="space-y-1">
-        <label className="block text-xs text-charcoal">Effective date</label>
+        <label className="block text-caption text-charcoal">Effective date</label>
         <input
           type="date"
           value={effectiveDate}
           onChange={(e) => setEffectiveDate(e.target.value)}
-          className="rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+          className="rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
         />
       </div>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -68,28 +68,28 @@ function MacroSplitForm({
           placeholder="Calories"
           value={calories}
           onChange={(e) => setCalories(e.target.value)}
-          className="rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+          className="rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
         />
         <input
           type="number"
           placeholder="Protein (g)"
           value={proteinG}
           onChange={(e) => setProteinG(e.target.value)}
-          className="rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+          className="rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
         />
         <input
           type="number"
           placeholder="Carbs (g)"
           value={carbsG}
           onChange={(e) => setCarbsG(e.target.value)}
-          className="rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+          className="rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
         />
         <input
           type="number"
           placeholder="Fat (g)"
           value={fatG}
           onChange={(e) => setFatG(e.target.value)}
-          className="rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+          className="rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
         />
       </div>
       <div className="flex gap-2">
@@ -97,14 +97,14 @@ function MacroSplitForm({
           type="button"
           disabled={saving}
           onClick={handleSave}
-          className="rounded-md bg-accent px-3 py-1 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+          className="rounded bg-accent px-3 py-1 text-body-sm font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50"
         >
-          {saving ? "Saving…" : "Save"}
+          {saving ? "Saving…" : "Save changes"}
         </button>
         <button
           type="button"
           onClick={onDone}
-          className="rounded-md border border-neutral px-3 py-1 text-sm text-ink hover:bg-white"
+          className="rounded border border-neutral px-3 py-1 text-body-sm text-ink transition-colors hover:bg-background"
         >
           Cancel
         </button>
@@ -125,18 +125,22 @@ export default function MacroSplitSection({
   const [editingId, setEditingId] = useState<string | null>(null);
 
   return (
-    <div className="space-y-3 rounded-lg border border-neutral bg-white p-4">
-      <h3 className="font-medium text-ink">Macro split</h3>
+    <div className="space-y-3 rounded border border-neutral bg-white p-4">
+      <h3 className="font-display text-display-sm text-ink">Macro split</h3>
 
       {current ? (
-        <div className="rounded-md bg-background px-3 py-2 text-sm">
+        <div className="rounded bg-background px-3 py-2 text-body-sm">
           <p className="font-medium text-ink">
             Current (since {current.effective_date})
           </p>
-          <p className="text-charcoal">{macroSummary(current)}</p>
+          <p className="font-mono text-data tabular-nums text-charcoal">
+            {macroSummary(current)}
+          </p>
         </div>
       ) : (
-        <p className="text-charcoal">No macro split set yet.</p>
+        <p className="text-body text-charcoal">
+          No macro split yet — set one below.
+        </p>
       )}
 
       {showForm ? (
@@ -145,7 +149,7 @@ export default function MacroSplitSection({
         <button
           type="button"
           onClick={() => setShowForm(true)}
-          className="text-sm text-accent hover:underline"
+          className="text-body-sm text-accent hover:underline"
         >
           + Set new macro split
         </button>
@@ -153,7 +157,7 @@ export default function MacroSplitSection({
 
       {macroSplits.length > 0 && (
         <div className="space-y-2">
-          <p className="text-sm font-medium text-charcoal">History</p>
+          <p className="text-body-sm font-medium text-charcoal">History</p>
           <ul className="space-y-2">
             {macroSplits.map((row) =>
               editingId === row.id ? (
@@ -167,14 +171,14 @@ export default function MacroSplitSection({
               ) : (
                 <li
                   key={row.id}
-                  className="flex items-center justify-between rounded-md border border-neutral px-3 py-2 text-sm"
+                  className="flex items-center justify-between rounded border border-neutral px-3 py-2 text-body-sm"
                 >
-                  <span>
+                  <span className="font-mono text-data tabular-nums">
                     {row.effective_date}
                     {current?.id === row.id && (
-                      <span className="ml-2 text-accent">(current)</span>
+                      <span className="ml-2 font-body text-accent">(current)</span>
                     )}
-                    {" — "}
+                    {"  —  "}
                     {macroSummary(row)}
                   </span>
                   <span className="flex shrink-0 gap-2">
@@ -192,7 +196,7 @@ export default function MacroSplitSection({
                           await deleteMacroSplit({ id: row.id, clientId });
                         }
                       }}
-                      className="text-red-700 hover:underline"
+                      className="text-warning hover:underline"
                     >
                       Delete
                     </button>

@@ -15,7 +15,7 @@ export default function PhotoGrid({
   emptyMessage: string;
 }) {
   if (photos.length === 0) {
-    return <p className="text-charcoal">{emptyMessage}</p>;
+    return <p className="text-body text-charcoal">{emptyMessage}</p>;
   }
 
   return (
@@ -23,7 +23,7 @@ export default function PhotoGrid({
       {photos.map((photo) => (
         <figure
           key={photo.id}
-          className="overflow-hidden rounded-md border border-neutral bg-white"
+          className="overflow-hidden rounded border border-neutral bg-white"
         >
           {photo.signedUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -33,11 +33,11 @@ export default function PhotoGrid({
               className="aspect-square w-full object-cover"
             />
           ) : (
-            <div className="flex aspect-square w-full items-center justify-center bg-background text-xs text-charcoal">
+            <div className="flex aspect-square w-full items-center justify-center bg-background text-caption text-charcoal">
               Unavailable
             </div>
           )}
-          <figcaption className="px-2 py-1 text-xs text-charcoal">
+          <figcaption className="px-2 py-1 font-mono text-caption tabular-nums text-charcoal">
             {photo.takenDate}
           </figcaption>
         </figure>

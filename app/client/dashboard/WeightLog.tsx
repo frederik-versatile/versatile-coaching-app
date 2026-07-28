@@ -24,12 +24,12 @@ export default function WeightLog({ entries }: { entries: Entry[] }) {
   }
 
   return (
-    <section className="space-y-3 rounded-lg border border-neutral bg-white p-4">
-      <h2 className="text-lg font-medium text-ink">Weight log</h2>
+    <section className="space-y-3 rounded border border-neutral bg-white p-4">
+      <h2 className="font-display text-display-sm text-ink">Weight log</h2>
 
       <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-3">
         <div className="space-y-1">
-          <label htmlFor="weight_date" className="block text-sm text-charcoal">
+          <label htmlFor="weight_date" className="block text-body-sm text-charcoal">
             Date
           </label>
           <input
@@ -37,11 +37,11 @@ export default function WeightLog({ entries }: { entries: Entry[] }) {
             type="date"
             value={logDate}
             onChange={(e) => setLogDate(e.target.value)}
-            className="rounded-md border border-neutral px-3 py-2 text-ink focus:border-accent focus:outline-none"
+            className="rounded border border-neutral px-3 py-2 font-mono text-data tabular-nums text-ink focus:border-accent"
           />
         </div>
         <div className="space-y-1">
-          <label htmlFor="weight_kg" className="block text-sm text-charcoal">
+          <label htmlFor="weight_kg" className="block text-body-sm text-charcoal">
             Weight (kg)
           </label>
           <input
@@ -51,35 +51,43 @@ export default function WeightLog({ entries }: { entries: Entry[] }) {
             required
             value={weightKg}
             onChange={(e) => setWeightKg(e.target.value)}
-            className="w-32 rounded-md border border-neutral px-3 py-2 text-ink focus:border-accent focus:outline-none"
+            className="w-32 rounded border border-neutral px-3 py-2 font-mono text-data tabular-nums text-ink focus:border-accent"
           />
         </div>
         <button
           type="submit"
           disabled={saving}
-          className="rounded-md bg-accent px-4 py-2 font-medium text-white hover:opacity-90 disabled:opacity-50"
+          className="rounded bg-accent px-4 py-2 text-body font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50"
         >
-          {saving ? "Saving…" : "Log weight"}
+          {saving ? "Logging weight…" : "Log weight"}
         </button>
       </form>
 
-      {entries.length > 0 && (
+      {entries.length === 0 ? (
+        <p className="text-body-sm text-charcoal">
+          No weight logged yet — log today&apos;s to start tracking your trend.
+        </p>
+      ) : (
         <ul className="divide-y divide-neutral">
           {entries.map((entry) => (
             <li
               key={entry.id}
-              className="flex items-center justify-between py-2 text-sm"
+              className="flex items-center justify-between py-2"
             >
-              <span className="text-ink">{entry.log_date}</span>
+              <span className="font-mono text-data tabular-nums text-ink">
+                {entry.log_date}
+              </span>
               <div className="flex items-center gap-3">
-                <span className="text-charcoal">{entry.weight_kg} kg</span>
+                <span className="font-mono text-data tabular-nums text-charcoal">
+                  {entry.weight_kg} kg
+                </span>
                 <button
                   type="button"
                   onClick={() => {
                     setLogDate(entry.log_date);
                     setWeightKg(entry.weight_kg.toString());
                   }}
-                  className="text-xs text-accent hover:underline"
+                  className="text-caption text-accent hover:underline"
                 >
                   Edit
                 </button>

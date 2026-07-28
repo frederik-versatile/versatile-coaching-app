@@ -18,7 +18,11 @@ export default function PhotoGallery({ photos }: { photos: GalleryPhoto[] }) {
   }
 
   if (photos.length === 0) {
-    return <p className="text-charcoal">No photos uploaded yet.</p>;
+    return (
+      <p className="text-body text-charcoal">
+        No progress photos yet — upload one to start tracking.
+      </p>
+    );
   }
 
   return (
@@ -26,7 +30,7 @@ export default function PhotoGallery({ photos }: { photos: GalleryPhoto[] }) {
       {photos.map((photo) => (
         <figure
           key={photo.id}
-          className="overflow-hidden rounded-md border border-neutral bg-white"
+          className="overflow-hidden rounded border border-neutral bg-white"
         >
           {photo.signedUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -36,17 +40,17 @@ export default function PhotoGallery({ photos }: { photos: GalleryPhoto[] }) {
               className="aspect-square w-full object-cover"
             />
           ) : (
-            <div className="flex aspect-square w-full items-center justify-center bg-background text-xs text-charcoal">
+            <div className="flex aspect-square w-full items-center justify-center bg-background text-caption text-charcoal">
               Unavailable
             </div>
           )}
-          <figcaption className="flex items-center justify-between px-2 py-1 text-xs text-charcoal">
-            {photo.takenDate}
+          <figcaption className="flex items-center justify-between px-2 py-1 text-caption text-charcoal">
+            <span className="font-mono tabular-nums">{photo.takenDate}</span>
             <button
               type="button"
               disabled={deletingId === photo.id}
               onClick={() => handleDelete(photo)}
-              className="text-red-700 hover:underline disabled:opacity-50"
+              className="text-warning hover:underline disabled:opacity-50"
             >
               {deletingId === photo.id ? "Deleting…" : "Delete"}
             </button>

@@ -33,20 +33,20 @@ export default function WorkoutView({
   }
 
   return (
-    <div className="rounded-md border border-neutral bg-background p-3">
+    <div className="rounded border border-neutral bg-background p-3">
       <button
         type="button"
         onClick={() => setExpanded((e) => !e)}
         className="flex w-full items-center justify-between text-left"
       >
-        <span className="font-medium text-ink">{workout.name}</span>
-        <span className="flex items-center gap-2 text-sm">
+        <span className="text-body font-medium text-ink">{workout.name}</span>
+        <span className="flex items-center gap-2 text-body-sm">
           {statusLabel && (
             <span
               className={
                 existingLog?.status === "completed"
-                  ? "text-green-700"
-                  : "text-charcoal"
+                  ? "text-success"
+                  : "text-warning"
               }
             >
               {statusLabel}
@@ -62,10 +62,10 @@ export default function WorkoutView({
             {workout.exercises.map((exercise) => (
               <li
                 key={exercise.id}
-                className="rounded-md border border-neutral bg-white px-3 py-2"
+                className="rounded border border-neutral bg-white px-3 py-2"
               >
-                <p className="text-sm font-medium text-ink">{exercise.name}</p>
-                <p className="text-xs text-charcoal">
+                <p className="text-body-sm font-medium text-ink">{exercise.name}</p>
+                <p className="font-mono text-data tabular-nums text-charcoal">
                   {[
                     exercise.target_sets ? `${exercise.target_sets} sets` : null,
                     exercise.target_reps ? `${exercise.target_reps} reps` : null,
@@ -74,10 +74,10 @@ export default function WorkoutView({
                       : null,
                   ]
                     .filter(Boolean)
-                    .join(" · ") || "No targets set"}
+                    .join("  ·  ") || "No targets set"}
                 </p>
                 {exercise.notes && (
-                  <p className="mt-1 text-xs text-charcoal">{exercise.notes}</p>
+                  <p className="mt-1 text-caption text-charcoal">{exercise.notes}</p>
                 )}
               </li>
             ))}
@@ -90,27 +90,27 @@ export default function WorkoutView({
               onDone={() => setShowCompletedForm(false)}
             />
           ) : showSkipForm ? (
-            <div className="space-y-2 rounded-md border border-dashed border-neutral p-3">
+            <div className="space-y-2 rounded border border-dashed border-neutral p-3">
               <textarea
                 value={skipNotes}
                 onChange={(e) => setSkipNotes(e.target.value)}
                 placeholder="Notes (optional)"
                 rows={2}
-                className="w-full rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+                className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
               />
               <div className="flex gap-2">
                 <button
                   type="button"
                   disabled={saving}
                   onClick={handleConfirmSkip}
-                  className="rounded-md bg-accent px-3 py-1 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+                  className="rounded bg-accent px-3 py-1 text-body-sm font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50"
                 >
                   {saving ? "Saving…" : "Confirm skipped"}
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowSkipForm(false)}
-                  className="rounded-md border border-neutral px-3 py-1 text-sm text-ink hover:bg-white"
+                  className="rounded border border-neutral px-3 py-1 text-body-sm text-ink transition-colors hover:bg-background"
                 >
                   Cancel
                 </button>
@@ -121,14 +121,14 @@ export default function WorkoutView({
               <button
                 type="button"
                 onClick={() => setShowCompletedForm(true)}
-                className="rounded-md bg-accent px-3 py-1 text-sm font-medium text-white hover:opacity-90"
+                className="rounded bg-accent px-3 py-1 text-body-sm font-medium text-white transition-colors hover:opacity-90"
               >
                 {existingLog?.status === "completed" ? "Edit log" : "Mark completed"}
               </button>
               <button
                 type="button"
                 onClick={() => setShowSkipForm(true)}
-                className="rounded-md border border-neutral px-3 py-1 text-sm text-ink hover:bg-white"
+                className="rounded border border-neutral px-3 py-1 text-body-sm text-ink transition-colors hover:bg-background"
               >
                 {existingLog?.status === "skipped" ? "Edit" : "Mark skipped"}
               </button>

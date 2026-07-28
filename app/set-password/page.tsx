@@ -39,11 +39,11 @@ export default function SetPasswordPage() {
       return;
     }
     if (password !== confirm) {
-      setError("Passwords don't match.");
+      setError("Passwords don't match — check both fields and try again.");
       return;
     }
     if (!consented) {
-      setError("You must accept the privacy policy to continue.");
+      setError("Accept the privacy policy to continue.");
       return;
     }
 
@@ -76,11 +76,11 @@ export default function SetPasswordPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center px-4">
-      <div className="w-full max-w-sm space-y-4 rounded-lg bg-white p-8 shadow-sm">
-        <h1 className="text-xl font-semibold text-ink">Set your password</h1>
+      <div className="w-full max-w-sm space-y-4 rounded border border-neutral bg-white p-8">
+        <h1 className="font-display text-display text-ink">Set your password</h1>
 
         {error && (
-          <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+          <p className="rounded border border-warning/30 bg-warning/10 px-3 py-2 text-body-sm text-warning">
             {error}
           </p>
         )}
@@ -88,7 +88,7 @@ export default function SetPasswordPage() {
         {ready ? (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1">
-              <label htmlFor="password" className="block text-sm text-charcoal">
+              <label htmlFor="password" className="block text-body-sm text-charcoal">
                 Password
               </label>
               <input
@@ -98,11 +98,11 @@ export default function SetPasswordPage() {
                 minLength={8}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-md border border-neutral px-3 py-2 text-ink focus:border-accent focus:outline-none"
+                className="w-full rounded border border-neutral px-3 py-2 text-body text-ink focus:border-accent"
               />
             </div>
             <div className="space-y-1">
-              <label htmlFor="confirm" className="block text-sm text-charcoal">
+              <label htmlFor="confirm" className="block text-body-sm text-charcoal">
                 Confirm password
               </label>
               <input
@@ -112,7 +112,7 @@ export default function SetPasswordPage() {
                 minLength={8}
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
-                className="w-full rounded-md border border-neutral px-3 py-2 text-ink focus:border-accent focus:outline-none"
+                className="w-full rounded border border-neutral px-3 py-2 text-body text-ink focus:border-accent"
               />
             </div>
             <div className="flex items-start gap-2">
@@ -124,7 +124,7 @@ export default function SetPasswordPage() {
                 onChange={(e) => setConsented(e.target.checked)}
                 className="mt-1"
               />
-              <label htmlFor="consent" className="text-sm text-charcoal">
+              <label htmlFor="consent" className="text-body-sm text-charcoal">
                 I have read and accept the{" "}
                 <Link href="/privacy" target="_blank" className="text-accent hover:underline">
                   Privacy Policy
@@ -135,13 +135,13 @@ export default function SetPasswordPage() {
             <button
               type="submit"
               disabled={saving}
-              className="w-full rounded-md bg-accent px-4 py-2 font-medium text-white hover:opacity-90 disabled:opacity-50"
+              className="w-full rounded bg-accent px-4 py-2 text-body font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50"
             >
-              {saving ? "Saving…" : "Set password"}
+              {saving ? "Setting password…" : "Set password"}
             </button>
           </form>
         ) : (
-          !error && <p className="text-charcoal">Checking your invite…</p>
+          !error && <p className="text-body text-charcoal">Checking your invite…</p>
         )}
       </div>
     </main>

@@ -97,14 +97,16 @@ export default function WorkoutLogForm({
   }
 
   return (
-    <div className="space-y-4 rounded-md border border-accent bg-white p-3">
+    <div className="space-y-4 rounded border border-accent bg-white p-3">
       {workout.exercises.map((exercise) => (
         <div key={exercise.id} className="space-y-2">
-          <p className="text-sm font-medium text-ink">{exercise.name}</p>
+          <p className="text-body-sm font-medium text-ink">{exercise.name}</p>
           <div className="space-y-1">
             {(sets[exercise.id] || []).map((row, i) => (
               <div key={i} className="flex items-center gap-2">
-                <span className="w-12 text-xs text-charcoal">Set {i + 1}</span>
+                <span className="w-12 font-mono text-data tabular-nums text-charcoal">
+                  Set {i + 1}
+                </span>
                 <input
                   type="number"
                   value={row.reps}
@@ -112,7 +114,7 @@ export default function WorkoutLogForm({
                     updateSet(exercise.id, i, "reps", e.target.value)
                   }
                   placeholder="Reps"
-                  className="w-20 rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+                  className="w-20 rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
                 />
                 <input
                   type="number"
@@ -122,12 +124,12 @@ export default function WorkoutLogForm({
                     updateSet(exercise.id, i, "weightKg", e.target.value)
                   }
                   placeholder="Weight (kg)"
-                  className="w-28 rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+                  className="w-28 rounded border border-neutral px-2 py-1 font-mono text-data tabular-nums text-ink focus:border-accent"
                 />
                 <button
                   type="button"
                   onClick={() => removeSet(exercise.id, i)}
-                  className="text-xs text-red-700 hover:underline"
+                  className="text-caption text-warning hover:underline"
                 >
                   Remove
                 </button>
@@ -137,7 +139,7 @@ export default function WorkoutLogForm({
           <button
             type="button"
             onClick={() => addSet(exercise.id)}
-            className="text-xs text-accent hover:underline"
+            className="text-caption text-accent hover:underline"
           >
             + Add set
           </button>
@@ -149,7 +151,7 @@ export default function WorkoutLogForm({
         onChange={(e) => setNotes(e.target.value)}
         placeholder="Notes (optional)"
         rows={2}
-        className="w-full rounded-md border border-neutral px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+        className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
       />
 
       <div className="flex gap-2">
@@ -157,14 +159,14 @@ export default function WorkoutLogForm({
           type="button"
           disabled={saving}
           onClick={handleSave}
-          className="rounded-md bg-accent px-3 py-1 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+          className="rounded bg-accent px-3 py-1 text-body-sm font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50"
         >
           {saving ? "Saving…" : "Save log"}
         </button>
         <button
           type="button"
           onClick={onDone}
-          className="rounded-md border border-neutral px-3 py-1 text-sm text-ink hover:bg-white"
+          className="rounded border border-neutral px-3 py-1 text-body-sm text-ink transition-colors hover:bg-background"
         >
           Cancel
         </button>

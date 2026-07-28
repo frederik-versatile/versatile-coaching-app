@@ -30,11 +30,11 @@ export default function AddWorkoutForm({
         name="name"
         required
         placeholder="Workout name"
-        className="w-full rounded-md border border-neutral bg-white px-2 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+        className="w-full rounded border border-neutral bg-white px-2 py-1 text-body-sm text-ink focus:border-accent"
       />
       <button
         type="submit"
-        className="w-full rounded-md border border-dashed border-neutral px-2 py-1 text-sm text-charcoal hover:border-accent hover:text-accent"
+        className="w-full rounded border border-dashed border-neutral px-2 py-1 text-body-sm text-charcoal transition-colors hover:border-accent hover:text-accent"
       >
         + Add workout
       </button>
