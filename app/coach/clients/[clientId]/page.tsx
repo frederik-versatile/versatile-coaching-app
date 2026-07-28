@@ -28,7 +28,7 @@ export default async function ClientDetailPage({
   // notFound() here is just a clean UI response to the same outcome.
   const { data: client } = await supabase
     .from("profiles")
-    .select("id, full_name")
+    .select("id, full_name, email")
     .eq("id", params.clientId)
     .single();
 
@@ -71,6 +71,7 @@ export default async function ClientDetailPage({
         <h1 className="mt-2 text-2xl font-semibold text-ink">
           {client.full_name || "Unnamed client"}
         </h1>
+        <p className="text-sm text-charcoal">{client.email}</p>
       </div>
 
       {searchParams.error && (

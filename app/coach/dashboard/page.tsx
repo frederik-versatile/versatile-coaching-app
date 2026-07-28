@@ -46,7 +46,7 @@ export default async function CoachDashboard({
   // filter below is just belt-and-braces clarity, not the security boundary.
   const { data: clients } = await supabase
     .from("profiles")
-    .select("id, full_name")
+    .select("id, full_name, email")
     .eq("role", "client")
     .order("full_name");
 
@@ -122,8 +122,13 @@ export default async function CoachDashboard({
                   href={`/coach/clients/${client.id}`}
                   className="flex items-center justify-between px-4 py-3 hover:bg-background"
                 >
-                  <span className="text-ink">
-                    {client.full_name || "Unnamed client"}
+                  <span>
+                    <span className="block text-ink">
+                      {client.full_name || "Unnamed client"}
+                    </span>
+                    <span className="block text-xs text-charcoal">
+                      {client.email}
+                    </span>
                   </span>
                   <span className="text-sm text-charcoal">
                     {formatLastActive(lastActiveByClient.get(client.id) ?? null)}
