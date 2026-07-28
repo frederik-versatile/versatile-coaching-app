@@ -1,0 +1,89 @@
+import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { DAY_LABELS } from "@/lib/days";
+import WorkoutCard from "./WorkoutCard";
+import AddWorkoutForm from "./AddWorkoutForm";
+
+export default async function WeeklyPlanPage({
+  params,
+}: {
+  params: { clientId: string; planId: string };
+}) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { data: client } = await supabase
+    .from("profiles")
+    .select("id, full_name")
+    .eq("id", params.clientId)
+    .single();
+
+  if (!client) notFound();
+
+  const { data: plan } = await supabase
+    .from("weekly_plans")
+    .select("id, week_start, notes")
+    .eq("id", params.planId)
+    .single();
+
+  if (!plan) notFound();
+
+  const { data: workouts } = await supabase
+    .from("workouts")
+    .select(
+      "id, day_of_week, name, sort_order, exercises(id, name, target_sets, target_reps, target_weight_kg, notes, sort_order)"
+    )
+    .eq("weekly_plan_id", params.planId)
+    .order("sort_order")
+    .order("sort_order", { referencedTable: "exercises" });
+
+  return (
+    <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-4 py-12">
+      <div>
+        <Link
+          href={`/coach/clients/${params.clientId}`}
+          className="text-sm text-accent hover:underline"
+        >
+          ← Back to {client.full_name || "client"}
+        </Link>
+        <h1 className="mt-2 text-2xl font-semibold text-ink">
+          Week of {plan.week_start}
+        </h1>
+        {plan.notes && <p className="text-charcoal">{plan.notes}</p>}
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+        {DAY_LABELS.map((label, dayOfWeek) => {
+          const dayWorkouts = (workouts || []).filter(
+            (w) => w.day_of_week === dayOfWeek
+          );
+
+          return (
+            <div key={label} className="space-y-3">
+              <h2 className="font-medium text-ink">{label}</h2>
+
+              {dayWorkouts.map((workout) => (
+                <WorkoutCard
+                  key={workout.id}
+                  workout={workout}
+                  clientId={params.clientId}
+                  planId={params.planId}
+                />
+              ))}
+
+              <AddWorkoutForm
+                clientId={params.clientId}
+                planId={params.planId}
+                dayOfWeek={dayOfWeek}
+              />
+            </div>
+          );
+        })}
+      </div>
+    </main>
+  );
+}
