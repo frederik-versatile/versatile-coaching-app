@@ -7,6 +7,8 @@ import WeightLog from "./WeightLog";
 import PhotoUploadForm from "./PhotoUploadForm";
 import PhotoGallery from "./PhotoGallery";
 import ProgressCharts from "./ProgressCharts";
+import NutritionView from "./NutritionView";
+import { pickCurrent, type MacroSplit, type MealPlan } from "@/lib/nutrition";
 
 export default async function ClientDashboard() {
   const supabase = createClient();
@@ -70,6 +72,23 @@ export default async function ClientDashboard() {
 
   const photos = await signPhotoUrls(supabase, photoRows || []);
 
+  const { data: macroSplits } = await supabase
+    .from("macro_splits")
+    .select("id, effective_date, calories, protein_g, carbs_g, fat_g")
+    .eq("client_id", user.id)
+    .order("effective_date", { ascending: false });
+
+  const { data: mealPlans } = await supabase
+    .from("meal_plans")
+    .select("id, effective_date, content")
+    .eq("client_id", user.id)
+    .order("effective_date", { ascending: false });
+
+  const currentMacros = pickCurrent((macroSplits || []) as MacroSplit[]);
+  const currentMealPlan = pickCurrent(
+    (mealPlans || []) as unknown as MealPlan[]
+  );
+
   return (
     <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-8 px-4 py-12">
       <div className="flex items-center justify-between">
@@ -108,6 +127,11 @@ export default async function ClientDashboard() {
       <WeightLog entries={weightLogs || []} />
 
       <ProgressCharts clientId={user.id} />
+
+      <NutritionView
+        currentMacros={currentMacros}
+        currentMealPlan={currentMealPlan}
+      />
 
       <section className="space-y-3">
         <h2 className="text-lg font-medium text-ink">Progress photos</h2>

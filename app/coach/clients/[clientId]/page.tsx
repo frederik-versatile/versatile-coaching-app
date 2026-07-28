@@ -6,6 +6,9 @@ import { signPhotoUrls } from "@/lib/photos";
 import { createWeeklyPlan } from "./actions";
 import PhotoGrid from "@/app/client/dashboard/PhotoGrid";
 import ProgressCharts from "@/app/client/dashboard/ProgressCharts";
+import MacroSplitSection from "./MacroSplitSection";
+import MealPlanSection from "./MealPlanSection";
+import type { MacroSplit, MealPlan } from "@/lib/nutrition";
 
 export default async function ClientDetailPage({
   params,
@@ -46,6 +49,18 @@ export default async function ClientDetailPage({
     .order("taken_date", { ascending: false });
 
   const photos = await signPhotoUrls(supabase, photoRows || []);
+
+  const { data: macroSplits } = await supabase
+    .from("macro_splits")
+    .select("id, effective_date, calories, protein_g, carbs_g, fat_g")
+    .eq("client_id", params.clientId)
+    .order("effective_date", { ascending: false });
+
+  const { data: mealPlans } = await supabase
+    .from("meal_plans")
+    .select("id, effective_date, content")
+    .eq("client_id", params.clientId)
+    .order("effective_date", { ascending: false });
 
   return (
     <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-8 px-4 py-12">
@@ -93,6 +108,18 @@ export default async function ClientDetailPage({
       <section className="space-y-3">
         <h2 className="text-lg font-medium text-ink">Progress photos</h2>
         <PhotoGrid photos={photos} emptyMessage="No photos uploaded yet." />
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-lg font-medium text-ink">Nutrition</h2>
+        <MacroSplitSection
+          clientId={params.clientId}
+          macroSplits={(macroSplits || []) as MacroSplit[]}
+        />
+        <MealPlanSection
+          clientId={params.clientId}
+          mealPlans={(mealPlans || []) as unknown as MealPlan[]}
+        />
       </section>
 
       <section className="space-y-3 rounded-lg border border-neutral bg-white p-4">
