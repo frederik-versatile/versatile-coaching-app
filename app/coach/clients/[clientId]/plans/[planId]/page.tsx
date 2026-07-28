@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { DAY_LABELS } from "@/lib/days";
 import WorkoutCard from "./WorkoutCard";
 import AddWorkoutForm from "./AddWorkoutForm";
+import PlanHeader from "./PlanHeader";
 
 export default async function WeeklyPlanPage({
   params,
@@ -41,19 +42,31 @@ export default async function WeeklyPlanPage({
     .order("sort_order")
     .order("sort_order", { referencedTable: "exercises" });
 
+  const workoutIds = (workouts || []).map((w) => w.id);
+  const { count: workoutLogCount } =
+    workoutIds.length > 0
+      ? await supabase
+          .from("workout_logs")
+          .select("id", { count: "exact", head: true })
+          .in("workout_id", workoutIds)
+      : { count: 0 };
+
   return (
     <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-4 py-12">
-      <div>
+      <div className="space-y-2">
         <Link
           href={`/coach/clients/${params.clientId}`}
           className="text-sm text-accent hover:underline"
         >
           ← Back to {client.full_name || "client"}
         </Link>
-        <h1 className="mt-2 text-2xl font-semibold text-ink">
-          Week of {plan.week_start}
-        </h1>
-        {plan.notes && <p className="text-charcoal">{plan.notes}</p>}
+        <PlanHeader
+          clientId={params.clientId}
+          planId={params.planId}
+          weekStart={plan.week_start}
+          notes={plan.notes}
+          workoutLogCount={workoutLogCount ?? 0}
+        />
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">

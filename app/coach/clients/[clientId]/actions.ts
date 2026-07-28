@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
 export async function createWeeklyPlan(formData: FormData) {
@@ -37,4 +38,43 @@ export async function createWeeklyPlan(formData: FormData) {
   }
 
   redirect(`/coach/clients/${clientId}/plans/${plan.id}`);
+}
+
+export async function updateWeeklyPlan(input: {
+  planId: string;
+  clientId: string;
+  weekStart: string;
+  notes: string | null;
+}) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  await supabase
+    .from("weekly_plans")
+    .update({ week_start: input.weekStart, notes: input.notes })
+    .eq("id", input.planId);
+
+  revalidatePath(`/coach/clients/${input.clientId}/plans/${input.planId}`);
+}
+
+export async function deleteWeeklyPlan(input: {
+  planId: string;
+  clientId: string;
+}) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  // Cascades to workouts -> exercises and, if any logs exist, to
+  // workout_logs -> exercise_logs too. The UI is responsible for warning
+  // about that before calling this — it's not re-checked here.
+  await supabase.from("weekly_plans").delete().eq("id", input.planId);
+
+  revalidatePath(`/coach/clients/${input.clientId}`);
+  redirect(`/coach/clients/${input.clientId}`);
 }

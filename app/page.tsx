@@ -25,20 +25,12 @@ export default async function Home() {
       <p className="max-w-md text-charcoal">
         Training plans and progress tracking for coaches and clients.
       </p>
-      <div className="flex gap-4">
-        <Link
-          href="/login"
-          className="rounded-md border border-neutral px-5 py-2 text-ink hover:bg-white"
-        >
-          Log in
-        </Link>
-        <Link
-          href="/signup"
-          className="rounded-md bg-accent px-5 py-2 font-medium text-white hover:opacity-90"
-        >
-          Sign up
-        </Link>
-      </div>
+      <Link
+        href="/login"
+        className="rounded-md bg-accent px-5 py-2 font-medium text-white hover:opacity-90"
+      >
+        Log in
+      </Link>
     </main>
   );
 }
