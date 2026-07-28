@@ -18,3 +18,13 @@ The `eslint`/`brace-expansion`/`postcss` chain is build-time/dev-tooling only �
 **Decision**: stay on 14.x. The upgrade to 15+ is a real breaking migration (`params`/`searchParams`/`headers()`/`cookies()` all become async, forcing a React 18→19 bump with unverified `recharts`/`@supabase/ssr` compatibility) touching nearly every route in the app. Given real client data is about to start flowing in, the migration's own risk of introducing new bugs right now was judged worse than the narrower, known, DoS-class residual risk on 14.x. Revisit as a dedicated, fully-retested migration effort — not bundled into a hardening pass.
 
 **Follow-up**: re-run this audit periodically; if the app ever starts using rewrites, `next/image`, Edge runtime, or WebSockets, more of the "not reachable" advisories above become live and this decision should be revisited immediately, not on the next scheduled review.
+
+# Auth & infrastructure hardening decisions (Phase 7)
+
+## 2026-07-28: password policy and backups on Supabase free tier
+
+**Password policy**: Supabase's dashboard controls for password character requirements and leaked-password protection are gated behind a paid plan — not available to configure on the free tier. Mitigated in-app: public signup is closed (invite-only since Phase 6), and `/set-password` enforces a client-side 8-character minimum, so no account created through the app can end up with a shorter password. Residual gap: Supabase's own platform-level floor (historically 6 characters) would still apply to anyone who called the Auth API directly, bypassing the app UI — narrow, since account creation is invite-only, but not zero.
+
+**Backups**: confirmed there is **no backup or point-in-time-recovery coverage at all** on the free tier — not short retention, none. Options considered: upgrade to Supabase Pro ($25/mo, daily backups + PITR add-on), a DIY scheduled `pg_dump` via GitHub Actions, or accept the risk for now.
+
+**Decision**: accept the risk for now, given the current scale (two real accounts, low data volume). Revisit before onboarding more clients or once data volume/stakes increase — this is not a "solved" item, just a deliberately deferred one.
