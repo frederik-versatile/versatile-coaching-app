@@ -28,3 +28,5 @@ The `eslint`/`brace-expansion`/`postcss` chain is build-time/dev-tooling only �
 **Backups**: confirmed there is **no backup or point-in-time-recovery coverage at all** on the free tier — not short retention, none. Options considered: upgrade to Supabase Pro ($25/mo, daily backups + PITR add-on), a DIY scheduled `pg_dump` via GitHub Actions, or accept the risk for now.
 
 **Decision**: accept the risk for now, given the current scale (two real accounts, low data volume). Revisit before onboarding more clients or once data volume/stakes increase — this is not a "solved" item, just a deliberately deferred one.
+
+**Rate limiting**: confirmed active via Supabase Dashboard → Authentication → Rate Limits — sign-up/sign-in requests are capped at 30 per 5 minutes per IP (360/hour), excluding anonymous users. This is Supabase's default and is a reasonable anti-brute-force limit; not changed.
