@@ -5,6 +5,7 @@ import { upcomingMonday } from "@/lib/days";
 import { signPhotoUrls } from "@/lib/photos";
 import { createWeeklyPlan } from "./actions";
 import PhotoGrid from "@/app/client/dashboard/PhotoGrid";
+import ProgressCharts from "@/app/client/dashboard/ProgressCharts";
 
 export default async function ClientDetailPage({
   params,
@@ -86,6 +87,8 @@ export default async function ClientDetailPage({
           </ul>
         )}
       </section>
+
+      <ProgressCharts clientId={params.clientId} />
 
       <section className="space-y-3">
         <h2 className="text-lg font-medium text-ink">Progress photos</h2>

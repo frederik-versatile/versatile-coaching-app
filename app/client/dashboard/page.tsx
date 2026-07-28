@@ -6,6 +6,7 @@ import PlanAccordion from "./PlanAccordion";
 import WeightLog from "./WeightLog";
 import PhotoUploadForm from "./PhotoUploadForm";
 import PhotoGallery from "./PhotoGallery";
+import ProgressCharts from "./ProgressCharts";
 
 export default async function ClientDashboard() {
   const supabase = createClient();
@@ -105,6 +106,8 @@ export default async function ClientDashboard() {
       </section>
 
       <WeightLog entries={weightLogs || []} />
+
+      <ProgressCharts clientId={user.id} />
 
       <section className="space-y-3">
         <h2 className="text-lg font-medium text-ink">Progress photos</h2>
