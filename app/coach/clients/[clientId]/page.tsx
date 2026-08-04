@@ -42,12 +42,18 @@ export default async function ClientDetailPage({
       ? await supabase
           .from("workouts")
           .select(
-            "id, day_of_week, name, sort_order, weekly_plan_id, exercises(id, name, target_sets, target_reps, target_weight_kg, target_rir, target_rest_seconds, notes, sort_order)"
+            "id, day_of_week, time_slot, workout_type, name, sort_order, weekly_plan_id, exercises(id, name, target_sets, target_reps, target_weight_kg, target_rir, target_rest_seconds, target_duration_minutes, target_distance_km, target_pace, notes, sort_order)"
           )
           .in("weekly_plan_id", planIds)
           .order("sort_order")
           .order("sort_order", { referencedTable: "exercises" })
       : { data: [] };
+
+  // Coach-owned library, RLS-scoped -- used to populate WeekGrid's sidebar.
+  const { data: templates } = await supabase
+    .from("workout_templates")
+    .select("id, name, workout_type, template_exercises(id)")
+    .order("created_at", { ascending: false });
 
   const workoutIds = (workouts || []).map((w) => w.id);
   const { data: workoutLogs } =
@@ -107,7 +113,7 @@ export default async function ClientDetailPage({
     .order("effective_date", { ascending: false });
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-6 px-4 py-12">
+    <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-4 py-12">
       <div>
         <Link href="/coach/dashboard" className="text-body-sm text-accent hover:underline">
           ← Back to dashboard
@@ -128,6 +134,7 @@ export default async function ClientDetailPage({
         clientId={params.clientId}
         plans={plans || []}
         workouts={workouts || []}
+        templates={templates || []}
         dayStatesByPlanId={dayStatesByPlanId}
         workoutLogCountByPlanId={workoutLogCountByPlanId}
         photos={photos}

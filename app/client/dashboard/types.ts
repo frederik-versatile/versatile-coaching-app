@@ -1,3 +1,5 @@
+import type { WorkoutType } from "@/lib/workoutTypes";
+
 export type Exercise = {
   id: string;
   name: string;
@@ -6,6 +8,9 @@ export type Exercise = {
   target_weight_kg: number | null;
   target_rir: number | null;
   target_rest_seconds: number | null;
+  target_duration_minutes: number | null;
+  target_distance_km: number | null;
+  target_pace: string | null;
   notes: string | null;
   sort_order: number;
 };
@@ -13,6 +18,8 @@ export type Exercise = {
 export type Workout = {
   id: string;
   day_of_week: number;
+  time_slot: "am" | "midday" | "pm";
+  workout_type: WorkoutType;
   name: string;
   sort_order: number;
   exercises: Exercise[];

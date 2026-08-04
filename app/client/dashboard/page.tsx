@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/actions";
 import { signPhotoUrls } from "@/lib/photos";
-import PlanAccordion from "./PlanAccordion";
+import WeekGridReadOnly from "./WeekGridReadOnly";
 import WeightLog from "./WeightLog";
 import PhotoUploadForm from "./PhotoUploadForm";
 import PhotoGallery from "./PhotoGallery";
@@ -26,7 +26,7 @@ export default async function ClientDashboard() {
   const { data: plans } = await supabase
     .from("weekly_plans")
     .select(
-      "id, week_start, notes, workouts(id, day_of_week, name, sort_order, exercises(id, name, target_sets, target_reps, target_weight_kg, target_rir, target_rest_seconds, notes, sort_order))"
+      "id, week_start, notes, workouts(id, day_of_week, time_slot, workout_type, name, sort_order, exercises(id, name, target_sets, target_reps, target_weight_kg, target_rir, target_rest_seconds, target_duration_minutes, target_distance_km, target_pace, notes, sort_order))"
     )
     .eq("client_id", user.id)
     .order("week_start", { ascending: false });
@@ -90,7 +90,7 @@ export default async function ClientDashboard() {
   );
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-8 px-4 py-12">
+    <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-8 px-4 py-12">
       <div className="flex items-center justify-between gap-4">
         <h1 className="font-display text-display-lg text-ink">
           {profile?.full_name || user.email}
@@ -115,7 +115,7 @@ export default async function ClientDashboard() {
         ) : (
           <div className="space-y-3">
             {sortedPlans.map((plan, i) => (
-              <PlanAccordion
+              <WeekGridReadOnly
                 key={plan.id}
                 plan={plan}
                 logsByWorkoutId={logsByWorkoutId}

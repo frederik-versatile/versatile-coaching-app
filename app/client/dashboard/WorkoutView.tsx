@@ -3,6 +3,7 @@
 import { useState } from "react";
 import WorkoutLogForm from "./WorkoutLogForm";
 import { logWorkoutSkipped } from "./actions";
+import { summarizeTargets } from "@/lib/workoutTypes";
 import type { Workout, WorkoutLog } from "./types";
 
 export default function WorkoutView({
@@ -66,19 +67,7 @@ export default function WorkoutView({
               >
                 <p className="text-body-sm font-medium text-ink">{exercise.name}</p>
                 <p className="font-mono text-data tabular-nums text-charcoal">
-                  {[
-                    exercise.target_sets ? `${exercise.target_sets} sets` : null,
-                    exercise.target_reps ? `${exercise.target_reps} reps` : null,
-                    exercise.target_weight_kg
-                      ? `${exercise.target_weight_kg} kg`
-                      : null,
-                    exercise.target_rir !== null ? `RIR ${exercise.target_rir}` : null,
-                    exercise.target_rest_seconds
-                      ? `${exercise.target_rest_seconds}s rest`
-                      : null,
-                  ]
-                    .filter(Boolean)
-                    .join("  ·  ") || "No targets set"}
+                  {summarizeTargets(workout.workout_type, exercise)}
                 </p>
                 {exercise.notes && (
                   <p className="mt-1 text-caption text-charcoal">{exercise.notes}</p>

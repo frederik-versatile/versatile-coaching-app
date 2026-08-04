@@ -88,14 +88,22 @@ export default async function CoachDashboard({
         <h1 className="font-display text-display-lg text-ink">
           {profile?.full_name || user.email}
         </h1>
-        <form action={signOut}>
-          <button
-            type="submit"
+        <div className="flex items-center gap-3">
+          <Link
+            href="/coach/library"
             className="rounded border border-neutral px-4 py-2 text-body-sm text-ink transition-colors hover:bg-background"
           >
-            Sign out
-          </button>
-        </form>
+            Library
+          </Link>
+          <form action={signOut}>
+            <button
+              type="submit"
+              className="rounded border border-neutral px-4 py-2 text-body-sm text-ink transition-colors hover:bg-background"
+            >
+              Sign out
+            </button>
+          </form>
+        </div>
       </div>
 
       {searchParams.error && (

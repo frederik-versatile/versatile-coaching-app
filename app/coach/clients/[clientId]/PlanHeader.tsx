@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { updateWeeklyPlan, deleteWeeklyPlan } from "../../actions";
+import { updateWeeklyPlan, deleteWeeklyPlan } from "./actions";
 
 export default function PlanHeader({
   clientId,

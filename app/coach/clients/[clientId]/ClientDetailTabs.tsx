@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { upcomingMonday } from "@/lib/days";
-import { type DayState } from "@/components/WeekStrip";
+import WeekStrip, { type DayState } from "@/components/WeekStrip";
+import type { WorkoutType } from "@/lib/workoutTypes";
 import PhotoGrid from "@/app/client/dashboard/PhotoGrid";
 import ProgressCharts from "@/app/client/dashboard/ProgressCharts";
-import DayEditor from "./plans/[planId]/DayEditor";
-import PlanHeader from "./plans/[planId]/PlanHeader";
+import WeekGrid from "./WeekGrid";
+import PlanHeader from "./PlanHeader";
 import MacroSplitSection from "./MacroSplitSection";
 import MealPlanSection from "./MealPlanSection";
 import { createWeeklyPlan } from "./actions";
@@ -21,15 +22,27 @@ type Exercise = {
   target_weight_kg: number | null;
   target_rir: number | null;
   target_rest_seconds: number | null;
+  target_duration_minutes: number | null;
+  target_distance_km: number | null;
+  target_pace: string | null;
   notes: string | null;
 };
 
 type Workout = {
   id: string;
   day_of_week: number;
+  time_slot: "am" | "midday" | "pm";
+  workout_type: WorkoutType;
   name: string;
   weekly_plan_id: string;
   exercises: Exercise[];
+};
+
+type Template = {
+  id: string;
+  name: string;
+  workout_type: WorkoutType;
+  template_exercises: { id: string }[];
 };
 
 type Plan = { id: string; week_start: string; notes: string | null };
@@ -41,6 +54,7 @@ export default function ClientDetailTabs({
   clientId,
   plans,
   workouts,
+  templates,
   dayStatesByPlanId,
   workoutLogCountByPlanId,
   photos,
@@ -50,6 +64,7 @@ export default function ClientDetailTabs({
   clientId: string;
   plans: Plan[];
   workouts: Workout[];
+  templates: Template[];
   dayStatesByPlanId: Record<string, DayState[]>;
   workoutLogCountByPlanId: Record<string, number>;
   photos: GalleryPhoto[];
@@ -182,9 +197,12 @@ export default function ClientDetailTabs({
                 notes={selectedPlan.notes}
                 workoutLogCount={workoutLogCountByPlanId[selectedPlan.id] ?? 0}
               />
-              <DayEditor
+              <div className="rounded border border-neutral bg-background p-3">
+                <WeekStrip states={dayStatesByPlanId[selectedPlan.id]} />
+              </div>
+              <WeekGrid
                 workouts={selectedPlanWorkouts}
-                dayStates={dayStatesByPlanId[selectedPlan.id]}
+                templates={templates}
                 clientId={clientId}
                 planId={selectedPlan.id}
               />
