@@ -11,14 +11,20 @@ export default async function LibraryPage() {
   if (!user) redirect("/login");
 
   // RLS ("coaches manage their own workout templates") already scopes this
-  // to exactly this coach's templates -- no manual filter needed.
+  // to exactly this coach's templates -- no manual filter needed. Only the
+  // exercise id is fetched, purely for the card's exercise-count badge; full
+  // exercise detail is only needed inside the per-template editor page.
   const { data: templates } = await supabase
     .from("workout_templates")
-    .select(
-      "id, name, workout_type, notes, template_exercises(id, name, target_sets, target_reps, target_weight_kg, target_rir, target_rest_seconds, target_duration_minutes, target_distance_km, target_pace, notes, sort_order)"
-    )
-    .order("created_at", { ascending: false })
-    .order("sort_order", { referencedTable: "template_exercises" });
+    .select("id, name, workout_type, template_exercises(id)")
+    .order("created_at", { ascending: false });
+
+  const templateSummaries = (templates || []).map((t) => ({
+    id: t.id,
+    name: t.name,
+    workout_type: t.workout_type,
+    exerciseCount: t.template_exercises?.length ?? 0,
+  }));
 
   return (
     <main className="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 px-4 py-12">
@@ -31,7 +37,7 @@ export default async function LibraryPage() {
         </div>
       </div>
 
-      <LibraryGrid templates={templates || []} />
+      <LibraryGrid templates={templateSummaries} />
     </main>
   );
 }
