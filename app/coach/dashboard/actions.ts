@@ -6,6 +6,15 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+async function requireCoach() {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+  return { supabase, user };
+}
+
 export async function inviteClient(formData: FormData) {
   const email = formData.get("email") as string;
   const fullName = formData.get("full_name") as string;
@@ -102,5 +111,64 @@ export async function inviteClient(formData: FormData) {
     `/coach/dashboard?success=${encodeURIComponent(
       existing ? `Added ${email} as a client.` : `Invited ${email}.`
     )}`
+  );
+}
+
+// Removes the coach-client link only -- the client's account and all their
+// history (plans, logs, photos, nutrition) stay intact. Re-inviting the same
+// email later re-links them to their existing data instead of starting over.
+export async function unlinkClient(clientId: string) {
+  const { supabase, user } = await requireCoach();
+
+  // RLS ("coaches manage their own links") backs this up, but the .eq
+  // already scopes the delete to rows this coach actually owns.
+  await supabase
+    .from("coach_clients")
+    .delete()
+    .eq("coach_id", user.id)
+    .eq("client_id", clientId);
+
+  revalidatePath("/coach/dashboard");
+}
+
+// Re-sends a set-password link via Supabase's built-in recovery email --
+// inviteUserByEmail can't be reused for an existing account (it errors with
+// "already registered"), and this works whether the client never confirmed
+// their original invite or just can't find/remember their password.
+export async function resendInvite(clientId: string) {
+  const { supabase } = await requireCoach();
+
+  // RLS ("coaches read linked clients' profiles") returns nothing if this
+  // client isn't actually linked to this coach.
+  const { data: client } = await supabase
+    .from("profiles")
+    .select("email")
+    .eq("id", clientId)
+    .single();
+
+  if (!client?.email) {
+    redirect(
+      `/coach/dashboard?error=${encodeURIComponent("Could not find that client.")}`
+    );
+  }
+
+  const host = headers().get("host");
+  const protocol = host?.startsWith("localhost") ? "http" : "https";
+  const redirectTo = `${protocol}://${host}/set-password`;
+
+  const { error } = await supabase.auth.resetPasswordForEmail(client!.email, {
+    redirectTo,
+  });
+
+  if (error) {
+    redirect(
+      `/coach/dashboard?error=${encodeURIComponent(
+        error.message || "Could not resend the invite."
+      )}`
+    );
+  }
+
+  redirect(
+    `/coach/dashboard?success=${encodeURIComponent(`Resent invite to ${client!.email}.`)}`
   );
 }

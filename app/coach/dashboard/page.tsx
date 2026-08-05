@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/actions";
 import { inviteClient } from "./actions";
+import ClientRow from "./ClientRow";
 
 function latestByClient(rows: { client_id: string; created_at: string }[]) {
   const map = new Map<string, string>();
@@ -127,24 +128,11 @@ export default async function CoachDashboard({
         ) : (
           <ul className="divide-y divide-neutral rounded border border-neutral bg-white">
             {clients.map((client) => (
-              <li key={client.id}>
-                <Link
-                  href={`/coach/clients/${client.id}`}
-                  className="flex items-center justify-between px-4 py-3 transition-colors hover:bg-background"
-                >
-                  <span>
-                    <span className="block text-body text-ink">
-                      {client.full_name || "Unnamed client"}
-                    </span>
-                    <span className="block text-caption text-charcoal">
-                      {client.email}
-                    </span>
-                  </span>
-                  <span className="text-body-sm text-charcoal">
-                    {formatLastActive(lastActiveByClient.get(client.id) ?? null)}
-                  </span>
-                </Link>
-              </li>
+              <ClientRow
+                key={client.id}
+                client={client}
+                lastActiveLabel={formatLastActive(lastActiveByClient.get(client.id) ?? null)}
+              />
             ))}
           </ul>
         )}
