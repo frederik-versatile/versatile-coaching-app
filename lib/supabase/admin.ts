@@ -17,6 +17,11 @@ export function createAdminClient() {
       auth: {
         autoRefreshToken: false,
         persistSession: false,
+        // Explicit for consistency with the other two clients (see
+        // lib/supabase/server.ts) -- plain @supabase/supabase-js already
+        // defaults to implicit, but this makes it certain rather than
+        // relying on that default never changing.
+        flowType: "implicit",
       },
     }
   );

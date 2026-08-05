@@ -8,6 +8,16 @@ export function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      // @supabase/ssr defaults to PKCE, which requires the code_verifier
+      // it stashes in a cookie on whichever browser made the original
+      // request. Invite/recovery links are always opened by the recipient
+      // on a different device than the one that triggered the email, so
+      // that verifier can never be there -- explicit implicit flow embeds
+      // real tokens directly in the link instead, which any browser can
+      // redeem with no prior state.
+      auth: {
+        flowType: "implicit",
+      },
       cookies: {
         get(name: string) {
           return cookieStore.get(name)?.value;
