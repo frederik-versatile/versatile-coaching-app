@@ -15,11 +15,31 @@ export default function SetPasswordPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    // The invite link's token is consumed by the browser client itself as
-    // soon as it's instantiated (detectSessionInUrl, on by default) — by the
-    // time this resolves, either a session exists or the link was bad/expired.
     const supabase = createClient();
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const code = new URLSearchParams(window.location.search).get("code");
+
+    async function establishSession() {
+      if (code) {
+        // PKCE flow (the default for @supabase/ssr's browser client): the
+        // invite/recovery link carries a `code` query param that must be
+        // explicitly exchanged for a session -- unlike the older hash-token
+        // flow, this isn't handled automatically by detectSessionInUrl.
+        const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+        if (exchangeError) {
+          setError(
+            "This invite link is invalid or has expired. Ask your coach to send a new one."
+          );
+          return;
+        }
+        setReady(true);
+        return;
+      }
+
+      // Fallback: hash-based token flow, already consumed automatically by
+      // detectSessionInUrl (on by default) by the time this resolves.
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (session) {
         setReady(true);
       } else {
@@ -27,7 +47,9 @@ export default function SetPasswordPage() {
           "This invite link is invalid or has expired. Ask your coach to send a new one."
         );
       }
-    });
+    }
+
+    establishSession();
   }, []);
 
   async function handleSubmit(e: React.FormEvent) {
