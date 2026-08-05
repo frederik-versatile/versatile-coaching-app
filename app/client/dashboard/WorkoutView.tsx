@@ -9,11 +9,13 @@ import type { Workout, WorkoutLog } from "./types";
 export default function WorkoutView({
   workout,
   existingLog,
+  defaultExpanded = false,
 }: {
   workout: Workout;
   existingLog: WorkoutLog | null;
+  defaultExpanded?: boolean;
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(defaultExpanded);
   const [showCompletedForm, setShowCompletedForm] = useState(false);
   const [showSkipForm, setShowSkipForm] = useState(false);
   const [skipNotes, setSkipNotes] = useState(existingLog?.notes || "");

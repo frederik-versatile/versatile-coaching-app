@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { DAY_LABELS } from "@/lib/days";
 import WeekStrip from "@/components/WeekStrip";
 import { computeDayStates } from "@/lib/weekState";
 import { WORKOUT_TYPE_LABELS, WORKOUT_TYPE_COLOR } from "@/lib/workoutTypes";
-import WorkoutView from "./WorkoutView";
 import type { Plan, WorkoutLog } from "./types";
 
 type TimeSlot = "am" | "midday" | "pm";
@@ -17,8 +17,9 @@ const TIME_SLOT_LABELS: Record<TimeSlot, string> = {
 };
 
 // Read-only mirror of the coach's WeekGrid: same 7x3 day/slot layout, no
-// sidebar, no drag -- clicking a scheduled workout expands the existing
-// WorkoutView (exercises + log completed/skipped), unchanged from before.
+// sidebar, no drag. Clicking a scheduled workout links to its own page
+// (same fix as the coach side -- a 1/7-width grid cell has no room to
+// expand exercises + a log form without wrapping into neighboring days).
 export default function WeekGridReadOnly({
   plan,
   logsByWorkoutId,
@@ -75,19 +76,40 @@ export default function WeekGridReadOnly({
                             {slotWorkouts.length === 0 ? (
                               <p className="py-2 text-center text-caption text-charcoal">Rest</p>
                             ) : (
-                              slotWorkouts.map((workout) => (
-                                <div key={workout.id} className="space-y-1">
-                                  <span
-                                    className={`inline-block rounded px-1.5 py-0.5 text-caption font-medium ${WORKOUT_TYPE_COLOR[workout.workout_type]}`}
+                              slotWorkouts.map((workout) => {
+                                const log = logsByWorkoutId[workout.id];
+                                const statusLabel =
+                                  log?.status === "completed"
+                                    ? "Completed"
+                                    : log?.status === "skipped"
+                                    ? "Skipped"
+                                    : null;
+                                return (
+                                  <Link
+                                    key={workout.id}
+                                    href={`/client/dashboard/workouts/${workout.id}`}
+                                    className="block space-y-1 rounded border border-neutral bg-white p-2 transition-colors hover:border-accent"
                                   >
-                                    {WORKOUT_TYPE_LABELS[workout.workout_type]}
-                                  </span>
-                                  <WorkoutView
-                                    workout={workout}
-                                    existingLog={logsByWorkoutId[workout.id] || null}
-                                  />
-                                </div>
-                              ))
+                                    <span
+                                      className={`inline-block rounded px-1.5 py-0.5 text-caption font-medium ${WORKOUT_TYPE_COLOR[workout.workout_type]}`}
+                                    >
+                                      {WORKOUT_TYPE_LABELS[workout.workout_type]}
+                                    </span>
+                                    <span className="block text-body-sm font-medium text-ink">
+                                      {workout.name}
+                                    </span>
+                                    {statusLabel && (
+                                      <span
+                                        className={`block text-caption ${
+                                          log?.status === "completed" ? "text-success" : "text-warning"
+                                        }`}
+                                      >
+                                        {statusLabel}
+                                      </span>
+                                    )}
+                                  </Link>
+                                );
+                              })
                             )}
                           </div>
                         </div>
