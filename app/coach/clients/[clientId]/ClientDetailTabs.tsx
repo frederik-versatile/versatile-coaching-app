@@ -60,6 +60,7 @@ export default function ClientDetailTabs({
   photos,
   macroSplits,
   mealPlans,
+  initialPlanId,
 }: {
   clientId: string;
   plans: Plan[];
@@ -68,13 +69,13 @@ export default function ClientDetailTabs({
   dayStatesByPlanId: Record<string, DayState[]>;
   workoutLogCountByPlanId: Record<string, number>;
   photos: GalleryPhoto[];
+  initialPlanId?: string;
   macroSplits: MacroSplit[];
   mealPlans: MealPlan[];
 }) {
   const [activeTab, setActiveTab] = useState<Tab>("Plan");
-  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(
-    plans[0]?.id ?? null
-  );
+  const initialPlan = initialPlanId && plans.some((p) => p.id === initialPlanId) ? initialPlanId : plans[0]?.id;
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(initialPlan ?? null);
   const [showNewPlanForm, setShowNewPlanForm] = useState(false);
 
   const selectedPlan = plans.find((p) => p.id === selectedPlanId) ?? null;

@@ -1,37 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { DAY_LABELS } from "@/lib/days";
-import {
-  WORKOUT_TYPES,
-  WORKOUT_TYPE_LABELS,
-  WORKOUT_TYPE_COLOR,
-  summarizeTargets,
-  type WorkoutType,
-} from "@/lib/workoutTypes";
-import TypeAdaptiveExerciseFields from "@/components/TypeAdaptiveExerciseFields";
-import {
-  scheduleTemplate,
-  updateWorkout,
-  deleteWorkout,
-  createExercise,
-  updateExercise,
-  deleteExercise,
-} from "./actions";
-
-type Exercise = {
-  id: string;
-  name: string;
-  target_sets: number | null;
-  target_reps: string | null;
-  target_weight_kg: number | null;
-  target_rir: number | null;
-  target_rest_seconds: number | null;
-  target_duration_minutes: number | null;
-  target_distance_km: number | null;
-  target_pace: string | null;
-  notes: string | null;
-};
+import { WORKOUT_TYPES, WORKOUT_TYPE_LABELS, WORKOUT_TYPE_COLOR, type WorkoutType } from "@/lib/workoutTypes";
+import { scheduleTemplate } from "./actions";
 
 type Workout = {
   id: string;
@@ -39,7 +12,7 @@ type Workout = {
   time_slot: TimeSlot;
   workout_type: WorkoutType;
   name: string;
-  exercises: Exercise[];
+  exercises: { id: string }[];
 };
 
 type Template = {
@@ -57,263 +30,27 @@ const TIME_SLOT_LABELS: Record<TimeSlot, string> = {
   pm: "PM",
 };
 
-function ExerciseEditRow({
-  exercise,
-  clientId,
-  workoutType,
-}: {
-  exercise: Exercise;
-  clientId: string;
-  workoutType: WorkoutType;
-}) {
-  const [isEditing, setIsEditing] = useState(false);
-
-  if (isEditing) {
-    return (
-      <form
-        action={async (formData) => {
-          await updateExercise(formData);
-          setIsEditing(false);
-        }}
-        className="space-y-3 rounded border border-accent bg-background p-3"
-      >
-        <input type="hidden" name="client_id" value={clientId} />
-        <input type="hidden" name="exercise_id" value={exercise.id} />
-        <div className="space-y-1">
-          <label className="block text-caption text-charcoal">Exercise name</label>
-          <input
-            name="name"
-            defaultValue={exercise.name}
-            required
-            className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
-          />
-        </div>
-        <TypeAdaptiveExerciseFields workoutType={workoutType} defaultValues={exercise} />
-        <div className="space-y-1">
-          <label className="block text-caption text-charcoal">Notes (optional)</label>
-          <textarea
-            name="notes"
-            defaultValue={exercise.notes ?? ""}
-            rows={1}
-            className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
-          />
-        </div>
-        <div className="flex gap-2">
-          <button
-            type="submit"
-            className="rounded bg-accent px-3 py-1 text-body-sm font-medium text-white transition-colors hover:opacity-90"
-          >
-            Save changes
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsEditing(false)}
-            className="rounded border border-neutral px-3 py-1 text-body-sm text-ink transition-colors hover:bg-background"
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
-    );
-  }
-
-  return (
-    <div className="flex items-start justify-between gap-2 rounded border border-neutral bg-white px-3 py-2">
-      <div>
-        <p className="text-body-sm font-medium text-ink">{exercise.name}</p>
-        <p className="font-mono text-data tabular-nums text-charcoal">
-          {summarizeTargets(workoutType, exercise)}
-        </p>
-        {exercise.notes && (
-          <p className="mt-1 text-caption text-charcoal">{exercise.notes}</p>
-        )}
-      </div>
-      <div className="flex shrink-0 gap-2">
-        <button
-          type="button"
-          onClick={() => setIsEditing(true)}
-          className="text-caption text-accent hover:underline"
-        >
-          Edit
-        </button>
-        <form
-          action={deleteExercise}
-          onSubmit={(e) => {
-            if (!confirm(`Delete "${exercise.name}"?`)) e.preventDefault();
-          }}
-        >
-          <input type="hidden" name="client_id" value={clientId} />
-          <input type="hidden" name="exercise_id" value={exercise.id} />
-          <button type="submit" className="text-caption text-warning hover:underline">
-            Delete
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-function AddExerciseForm({
-  clientId,
-  workoutId,
-  workoutType,
-}: {
-  clientId: string;
-  workoutId: string;
-  workoutType: WorkoutType;
-}) {
-  const [showForm, setShowForm] = useState(false);
-
-  if (!showForm) {
-    return (
-      <button
-        type="button"
-        onClick={() => setShowForm(true)}
-        className="text-body-sm text-accent hover:underline"
-      >
-        + Add exercise
-      </button>
-    );
-  }
-
-  return (
-    <form
-      action={async (formData) => {
-        await createExercise(formData);
-        setShowForm(false);
-      }}
-      className="space-y-3 rounded border border-dashed border-neutral p-3"
-    >
-      <input type="hidden" name="client_id" value={clientId} />
-      <input type="hidden" name="workout_id" value={workoutId} />
-      <div className="space-y-1">
-        <label className="block text-caption text-charcoal">Exercise name</label>
-        <input
-          name="name"
-          required
-          className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
-        />
-      </div>
-      <TypeAdaptiveExerciseFields workoutType={workoutType} />
-      <div className="space-y-1">
-        <label className="block text-caption text-charcoal">Notes (optional)</label>
-        <textarea
-          name="notes"
-          rows={1}
-          className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
-        />
-      </div>
-      <div className="flex gap-2">
-        <button
-          type="submit"
-          className="rounded bg-accent px-3 py-1 text-body-sm font-medium text-white transition-colors hover:opacity-90"
-        >
-          Add exercise
-        </button>
-        <button
-          type="button"
-          onClick={() => setShowForm(false)}
-          className="rounded border border-neutral px-3 py-1 text-body-sm text-ink transition-colors hover:bg-background"
-        >
-          Cancel
-        </button>
-      </div>
-    </form>
-  );
-}
-
+// Full exercise editing lives on its own page now
+// (/coach/clients/[clientId]/workouts/[workoutId]) -- a scheduled workout's
+// card is just a link into that page, since a 1/7-width grid cell has no
+// room to expand a real exercise editor without wrapping into neighboring
+// day columns.
 function ScheduledWorkoutCard({ workout, clientId }: { workout: Workout; clientId: string }) {
-  const [expanded, setExpanded] = useState(false);
-  const [renaming, setRenaming] = useState(false);
-
   return (
-    <div className="space-y-2 rounded border border-neutral bg-white p-2">
-      {renaming ? (
-        <form
-          action={async (formData) => {
-            await updateWorkout(formData);
-            setRenaming(false);
-          }}
-          className="space-y-2"
-        >
-          <input type="hidden" name="client_id" value={clientId} />
-          <input type="hidden" name="workout_id" value={workout.id} />
-          <input type="hidden" name="day_of_week" value={workout.day_of_week} />
-          <input type="hidden" name="time_slot" value={workout.time_slot} />
-          <input
-            name="name"
-            defaultValue={workout.name}
-            required
-            autoFocus
-            className="w-full rounded border border-neutral px-2 py-1 text-body-sm text-ink focus:border-accent"
-          />
-          <div className="flex gap-2">
-            <button
-              type="submit"
-              className="rounded bg-accent px-2 py-0.5 text-caption font-medium text-white transition-colors hover:opacity-90"
-            >
-              Save
-            </button>
-            <button
-              type="button"
-              onClick={() => setRenaming(false)}
-              className="rounded border border-neutral px-2 py-0.5 text-caption text-ink transition-colors hover:bg-background"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      ) : (
-        <button
-          type="button"
-          onClick={() => setExpanded((e) => !e)}
-          className="block w-full text-left"
-        >
-          <span
-            className={`inline-block rounded px-1.5 py-0.5 text-caption font-medium ${WORKOUT_TYPE_COLOR[workout.workout_type]}`}
-          >
-            {WORKOUT_TYPE_LABELS[workout.workout_type]}
-          </span>
-          <span className="mt-1 block text-body-sm font-medium text-ink">{workout.name}</span>
-        </button>
-      )}
-
-      {expanded && !renaming && (
-        <div className="space-y-2 border-t border-neutral pt-2">
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={() => setRenaming(true)}
-              className="text-caption text-accent hover:underline"
-            >
-              Rename
-            </button>
-            <form
-              action={deleteWorkout}
-              onSubmit={(e) => {
-                if (!confirm(`Delete "${workout.name}" and all its exercises?`)) e.preventDefault();
-              }}
-            >
-              <input type="hidden" name="client_id" value={clientId} />
-              <input type="hidden" name="workout_id" value={workout.id} />
-              <button type="submit" className="text-caption text-warning hover:underline">
-                Delete workout
-              </button>
-            </form>
-          </div>
-
-          {workout.exercises.map((exercise) => (
-            <ExerciseEditRow
-              key={exercise.id}
-              exercise={exercise}
-              clientId={clientId}
-              workoutType={workout.workout_type}
-            />
-          ))}
-          <AddExerciseForm clientId={clientId} workoutId={workout.id} workoutType={workout.workout_type} />
-        </div>
-      )}
-    </div>
+    <Link
+      href={`/coach/clients/${clientId}/workouts/${workout.id}`}
+      className="block space-y-1 rounded border border-neutral bg-white p-2 transition-colors hover:border-accent"
+    >
+      <span
+        className={`inline-block rounded px-1.5 py-0.5 text-caption font-medium ${WORKOUT_TYPE_COLOR[workout.workout_type]}`}
+      >
+        {WORKOUT_TYPE_LABELS[workout.workout_type]}
+      </span>
+      <span className="block text-body-sm font-medium text-ink">{workout.name}</span>
+      <span className="block text-caption text-charcoal">
+        {workout.exercises.length} exercise{workout.exercises.length === 1 ? "" : "s"}
+      </span>
+    </Link>
   );
 }
 

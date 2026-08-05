@@ -157,21 +157,20 @@ export async function scheduleTemplate(input: {
   revalidatePath(`/coach/clients/${input.clientId}`);
 }
 
+// Rename only -- repositioning a workout onto a different day/slot happens
+// by scheduling a new one via drag-and-drop, not by editing an existing
+// scheduled workout's day_of_week/time_slot (no UI exposes that).
 export async function updateWorkout(formData: FormData) {
   const clientId = formData.get("client_id") as string;
   const workoutId = formData.get("workout_id") as string;
-  const dayOfWeek = Number(formData.get("day_of_week"));
-  const timeSlot = formData.get("time_slot") as string;
   const name = formData.get("name") as string;
 
   const { supabase } = await requireCoach();
 
-  await supabase
-    .from("workouts")
-    .update({ name, day_of_week: dayOfWeek, time_slot: timeSlot })
-    .eq("id", workoutId);
+  await supabase.from("workouts").update({ name }).eq("id", workoutId);
 
   revalidatePath(`/coach/clients/${clientId}`);
+  revalidatePath(`/coach/clients/${clientId}/workouts/${workoutId}`);
 }
 
 export async function deleteWorkout(formData: FormData) {
@@ -214,10 +213,12 @@ export async function createExercise(formData: FormData) {
   });
 
   revalidatePath(`/coach/clients/${clientId}`);
+  revalidatePath(`/coach/clients/${clientId}/workouts/${workoutId}`);
 }
 
 export async function updateExercise(formData: FormData) {
   const clientId = formData.get("client_id") as string;
+  const workoutId = formData.get("workout_id") as string;
   const exerciseId = formData.get("exercise_id") as string;
   const name = formData.get("name") as string;
 
@@ -240,10 +241,12 @@ export async function updateExercise(formData: FormData) {
     .eq("id", exerciseId);
 
   revalidatePath(`/coach/clients/${clientId}`);
+  if (workoutId) revalidatePath(`/coach/clients/${clientId}/workouts/${workoutId}`);
 }
 
 export async function deleteExercise(formData: FormData) {
   const clientId = formData.get("client_id") as string;
+  const workoutId = formData.get("workout_id") as string;
   const exerciseId = formData.get("exercise_id") as string;
 
   const { supabase } = await requireCoach();
@@ -251,6 +254,7 @@ export async function deleteExercise(formData: FormData) {
   await supabase.from("exercises").delete().eq("id", exerciseId);
 
   revalidatePath(`/coach/clients/${clientId}`);
+  if (workoutId) revalidatePath(`/coach/clients/${clientId}/workouts/${workoutId}`);
 }
 
 export type { WorkoutType };

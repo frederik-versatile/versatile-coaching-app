@@ -11,7 +11,7 @@ export default async function ClientDetailPage({
   searchParams,
 }: {
   params: { clientId: string };
-  searchParams: { error?: string };
+  searchParams: { error?: string; plan?: string };
 }) {
   const supabase = createClient();
   const {
@@ -140,6 +140,7 @@ export default async function ClientDetailPage({
         photos={photos}
         macroSplits={(macroSplits || []) as MacroSplit[]}
         mealPlans={(mealPlans || []) as unknown as MealPlan[]}
+        initialPlanId={searchParams.plan}
       />
     </main>
   );
