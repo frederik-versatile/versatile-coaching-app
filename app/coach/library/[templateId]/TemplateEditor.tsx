@@ -15,6 +15,8 @@ import {
   createTemplateExercise,
   updateTemplateExercise,
   deleteTemplateExercise,
+  groupIntoSuperset,
+  removeFromSuperset,
 } from "../actions";
 
 type Exercise = {
@@ -29,7 +31,44 @@ type Exercise = {
   target_distance_km: number | null;
   target_pace: string | null;
   notes: string | null;
+  superset_group: string | null;
 };
+
+// Drag-one-exercise-onto-another's custom MIME type -- distinct from the
+// catalog sidebar's plain "text/plain" drag, so dropping an exercise row
+// onto another exercise row groups them into a superset, while dropping a
+// catalog exercise into the section's own drop zone still just adds it.
+const SUPERSET_DRAG_TYPE = "application/x-superset-source";
+
+type DisplayItem =
+  | { type: "single"; exercise: Exercise }
+  | { type: "superset"; groupId: string; label: string; exercises: Exercise[] };
+
+// Groups are built fresh from the data every render (letters/numbers are
+// computed, never stored) so reordering or adding exercises can never leave
+// a stale label behind. Assumes `exercises` is already in sort_order.
+function buildDisplayItems(exercises: Exercise[]): DisplayItem[] {
+  const items: DisplayItem[] = [];
+  const seenGroups = new Set<string>();
+  let nextLetterCode = "A".charCodeAt(0);
+
+  for (const exercise of exercises) {
+    if (!exercise.superset_group) {
+      items.push({ type: "single", exercise });
+      continue;
+    }
+    if (seenGroups.has(exercise.superset_group)) continue;
+    seenGroups.add(exercise.superset_group);
+    items.push({
+      type: "superset",
+      groupId: exercise.superset_group,
+      label: String.fromCharCode(nextLetterCode++),
+      exercises: exercises.filter((e) => e.superset_group === exercise.superset_group),
+    });
+  }
+
+  return items;
+}
 
 type Section = {
   id: string;
@@ -245,13 +284,18 @@ function CatalogSidebar({ catalog, templateId }: { catalog: CatalogExercise[]; t
 function TemplateExerciseRow({
   exercise,
   templateId,
+  sectionId,
   workoutType,
+  supersetLabel,
 }: {
   exercise: Exercise;
   templateId: string;
+  sectionId: string;
   workoutType: WorkoutType;
+  supersetLabel: string | null;
 }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
 
   if (isEditing) {
     return (
@@ -303,8 +347,38 @@ function TemplateExerciseRow({
   }
 
   return (
-    <div className="flex items-start justify-between gap-2 rounded border border-neutral bg-white px-3 py-2">
+    <div
+      draggable
+      onDragStart={(e) => e.dataTransfer.setData(SUPERSET_DRAG_TYPE, exercise.id)}
+      onDragOver={(e) => {
+        if (!e.dataTransfer.types.includes(SUPERSET_DRAG_TYPE)) return;
+        e.preventDefault();
+        setDragOver(true);
+      }}
+      onDragLeave={() => setDragOver(false)}
+      onDrop={async (e) => {
+        const draggedExerciseId = e.dataTransfer.getData(SUPERSET_DRAG_TYPE);
+        if (!draggedExerciseId) return;
+        e.preventDefault();
+        e.stopPropagation();
+        setDragOver(false);
+        await groupIntoSuperset({
+          templateId,
+          sectionId,
+          draggedExerciseId,
+          targetExerciseId: exercise.id,
+        });
+      }}
+      className={`flex cursor-grab items-start justify-between gap-2 rounded border bg-white px-3 py-2 active:cursor-grabbing ${
+        dragOver ? "border-accent bg-accent/5" : "border-neutral"
+      }`}
+    >
       <div>
+        {supersetLabel && (
+          <span className="mb-1 inline-block rounded bg-accent/10 px-1.5 py-0.5 text-caption font-medium text-accent">
+            {supersetLabel}
+          </span>
+        )}
         <p className="text-body-sm font-medium text-ink">{exercise.name}</p>
         <p className="font-mono text-data tabular-nums text-charcoal">
           {summarizeTargets(workoutType, exercise)}
@@ -319,6 +393,15 @@ function TemplateExerciseRow({
         >
           Edit
         </button>
+        {supersetLabel && (
+          <button
+            type="button"
+            onClick={() => removeFromSuperset({ templateId, sectionId, exerciseId: exercise.id })}
+            className="text-caption text-charcoal hover:underline"
+          >
+            Ungroup
+          </button>
+        )}
         <button
           type="button"
           onClick={async () => {
@@ -500,16 +583,39 @@ function SectionCard({
             Drag an exercise here, or add one below
           </p>
         )}
-        {section.template_exercises.map((exercise) => (
-          <TemplateExerciseRow
-            key={exercise.id}
-            exercise={exercise}
-            templateId={templateId}
-            workoutType={workoutType}
-          />
-        ))}
+        {buildDisplayItems(section.template_exercises).map((item) =>
+          item.type === "single" ? (
+            <TemplateExerciseRow
+              key={item.exercise.id}
+              exercise={item.exercise}
+              templateId={templateId}
+              sectionId={section.id}
+              workoutType={workoutType}
+              supersetLabel={null}
+            />
+          ) : (
+            <div key={item.groupId} className="space-y-1.5 rounded border-2 border-accent/30 p-1.5">
+              <p className="text-caption font-medium text-accent">Superset {item.label}</p>
+              {item.exercises.map((exercise, i) => (
+                <TemplateExerciseRow
+                  key={exercise.id}
+                  exercise={exercise}
+                  templateId={templateId}
+                  sectionId={section.id}
+                  workoutType={workoutType}
+                  supersetLabel={`${item.label}${i + 1}`}
+                />
+              ))}
+            </div>
+          )
+        )}
       </div>
 
+      {section.template_exercises.length > 1 && (
+        <p className="text-caption text-charcoal">
+          Drag one exercise onto another to group them into a superset.
+        </p>
+      )}
       <AddTemplateExerciseForm templateId={templateId} sectionId={section.id} workoutType={workoutType} />
     </div>
   );

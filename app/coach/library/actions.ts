@@ -224,3 +224,90 @@ export async function deleteTemplateExercise(input: { exerciseId: string; templa
 
   revalidatePath(`/coach/library/${input.templateId}`);
 }
+
+// Drag-one-exercise-onto-another landing action: groups them into a
+// superset. If the target is already in a group, the dragged exercise joins
+// it; otherwise a fresh group is created for the pair. If the dragged
+// exercise was already in a different group, it's pulled out of that one --
+// and if that leaves only one exercise behind, that lone leftover is
+// ungrouped too, since a "group" of one isn't a superset.
+export async function groupIntoSuperset(input: {
+  templateId: string;
+  sectionId: string;
+  draggedExerciseId: string;
+  targetExerciseId: string;
+}) {
+  const { supabase } = await requireCoach();
+
+  if (input.draggedExerciseId === input.targetExerciseId) return;
+
+  const { data: exercises } = await supabase
+    .from("template_exercises")
+    .select("id, superset_group")
+    .eq("section_id", input.sectionId);
+
+  const dragged = exercises?.find((e) => e.id === input.draggedExerciseId);
+  const target = exercises?.find((e) => e.id === input.targetExerciseId);
+  if (!dragged || !target) return;
+
+  // Already grouped together -- nothing to do.
+  if (dragged.superset_group && dragged.superset_group === target.superset_group) return;
+
+  const oldGroup = dragged.superset_group;
+  const groupId = target.superset_group ?? crypto.randomUUID();
+
+  await supabase
+    .from("template_exercises")
+    .update({ superset_group: groupId })
+    .in("id", [dragged.id, target.id]);
+
+  if (oldGroup) {
+    const remaining = (exercises || []).filter(
+      (e) => e.superset_group === oldGroup && e.id !== dragged.id
+    );
+    if (remaining.length === 1) {
+      await supabase
+        .from("template_exercises")
+        .update({ superset_group: null })
+        .eq("id", remaining[0].id);
+    }
+  }
+
+  revalidatePath(`/coach/library/${input.templateId}`);
+}
+
+export async function removeFromSuperset(input: {
+  templateId: string;
+  sectionId: string;
+  exerciseId: string;
+}) {
+  const { supabase } = await requireCoach();
+
+  const { data: exercise } = await supabase
+    .from("template_exercises")
+    .select("superset_group")
+    .eq("id", input.exerciseId)
+    .single();
+
+  if (!exercise?.superset_group) return;
+
+  await supabase
+    .from("template_exercises")
+    .update({ superset_group: null })
+    .eq("id", input.exerciseId);
+
+  const { data: remaining } = await supabase
+    .from("template_exercises")
+    .select("id")
+    .eq("section_id", input.sectionId)
+    .eq("superset_group", exercise.superset_group);
+
+  if (remaining && remaining.length === 1) {
+    await supabase
+      .from("template_exercises")
+      .update({ superset_group: null })
+      .eq("id", remaining[0].id);
+  }
+
+  revalidatePath(`/coach/library/${input.templateId}`);
+}

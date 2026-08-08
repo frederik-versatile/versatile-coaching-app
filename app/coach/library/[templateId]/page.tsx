@@ -28,7 +28,7 @@ export default async function TemplateEditorPage({
   const { data: sectionsRaw } = await supabase
     .from("template_sections")
     .select(
-      "id, name, sort_order, template_exercises(id, name, target_sets, target_reps, target_weight_kg, target_rir, target_rest_seconds, target_duration_minutes, target_distance_km, target_pace, notes, sort_order)"
+      "id, name, sort_order, template_exercises(id, name, target_sets, target_reps, target_weight_kg, target_rir, target_rest_seconds, target_duration_minutes, target_distance_km, target_pace, notes, sort_order, superset_group)"
     )
     .eq("workout_template_id", params.templateId);
 
