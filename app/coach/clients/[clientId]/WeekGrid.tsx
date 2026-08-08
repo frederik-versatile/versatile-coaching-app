@@ -5,6 +5,7 @@ import Link from "next/link";
 import { DAY_LABELS } from "@/lib/days";
 import { WORKOUT_TYPES, WORKOUT_TYPE_LABELS, WORKOUT_TYPE_COLOR, type WorkoutType } from "@/lib/workoutTypes";
 import { scheduleTemplate } from "./actions";
+import { createBlankTemplate } from "@/app/coach/library/actions";
 
 type Workout = {
   id: string;
@@ -222,9 +223,7 @@ function TemplateSidebar({ templates }: { templates: Template[] }) {
       </div>
 
       {templates.length === 0 ? (
-        <p className="text-caption text-charcoal">
-          No workouts in your library yet. Add some from the Library tab.
-        </p>
+        <p className="text-caption text-charcoal">No workouts in your library yet.</p>
       ) : visible.length === 0 ? (
         <p className="text-caption text-charcoal">No matches.</p>
       ) : (
@@ -249,6 +248,15 @@ function TemplateSidebar({ templates }: { templates: Template[] }) {
           ))}
         </ul>
       )}
+
+      <form action={createBlankTemplate}>
+        <button
+          type="submit"
+          className="w-full rounded bg-accent px-3 py-1.5 text-body-sm font-medium text-white transition-colors hover:opacity-90"
+        >
+          + New Workout
+        </button>
+      </form>
     </div>
   );
 }
