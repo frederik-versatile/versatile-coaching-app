@@ -19,7 +19,7 @@ export default async function TemplateEditorPage({
   // response to that same outcome.
   const { data: template } = await supabase
     .from("workout_templates")
-    .select("id, name, workout_type, notes")
+    .select("id, name, workout_type, notes, tag")
     .eq("id", params.templateId)
     .single();
 

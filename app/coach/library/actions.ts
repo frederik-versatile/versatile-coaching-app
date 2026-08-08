@@ -41,12 +41,18 @@ export async function updateTemplate(input: {
   name: string;
   workoutType: WorkoutType;
   notes: string | null;
+  tag: string | null;
 }) {
   const { supabase } = await requireCoach();
 
   await supabase
     .from("workout_templates")
-    .update({ name: input.name, workout_type: input.workoutType, notes: input.notes })
+    .update({
+      name: input.name,
+      workout_type: input.workoutType,
+      notes: input.notes,
+      tag: input.tag,
+    })
     .eq("id", input.templateId);
 
   revalidatePath("/coach/library");

@@ -1,10 +1,11 @@
 // Single source of truth for the fixed workout-type set and which target
 // fields each type shows. No "use client" -- imported from both server
 // components (data fetching) and client components (form rendering).
-export type WorkoutType = "strength" | "run" | "bike" | "mobility" | "recovery";
+export type WorkoutType = "strength" | "functional" | "run" | "bike" | "mobility" | "recovery";
 
 export const WORKOUT_TYPES: WorkoutType[] = [
   "strength",
+  "functional",
   "run",
   "bike",
   "mobility",
@@ -13,6 +14,7 @@ export const WORKOUT_TYPES: WorkoutType[] = [
 
 export const WORKOUT_TYPE_LABELS: Record<WorkoutType, string> = {
   strength: "Strength",
+  functional: "Functional Training",
   run: "Run",
   bike: "Bike",
   mobility: "Mobility",
@@ -22,8 +24,11 @@ export const WORKOUT_TYPE_LABELS: Record<WorkoutType, string> = {
 // Distinct-but-muted colors per type, drawn from the existing palette
 // (accent/success/warning/charcoal/neutral) rather than introducing new
 // hues -- keeps type tags visually consistent with the rest of the app.
+// Only 3 real hues exist, so the lower-intensity types (functional/
+// mobility/recovery) share the same muted treatment.
 export const WORKOUT_TYPE_COLOR: Record<WorkoutType, string> = {
   strength: "text-warning bg-warning/10",
+  functional: "text-charcoal bg-neutral/20",
   run: "text-success bg-success/10",
   bike: "text-accent bg-accent/10",
   mobility: "text-charcoal bg-neutral/20",
@@ -41,9 +46,10 @@ export type ExerciseField =
   | "target_pace";
 
 // Which fields make sense to show/collect for each workout type. Strength
-// keeps the original sets/reps/weight/RIR/rest set; cardio types (run/bike)
-// swap to duration/distance/pace; mobility/recovery only need duration (a
-// session length), everything else stays free-text notes.
+// keeps the original sets/reps/weight/RIR/rest set; functional adds a
+// duration on top of that (circuits are often timed); cardio types (run/
+// bike) swap to duration/distance/pace; mobility/recovery only need
+// duration (a session length), everything else stays free-text notes.
 export const FIELDS_BY_TYPE: Record<WorkoutType, ExerciseField[]> = {
   strength: [
     "target_sets",
@@ -51,6 +57,14 @@ export const FIELDS_BY_TYPE: Record<WorkoutType, ExerciseField[]> = {
     "target_weight_kg",
     "target_rir",
     "target_rest_seconds",
+  ],
+  functional: [
+    "target_sets",
+    "target_reps",
+    "target_weight_kg",
+    "target_rir",
+    "target_rest_seconds",
+    "target_duration_minutes",
   ],
   run: ["target_duration_minutes", "target_distance_km", "target_pace"],
   bike: ["target_duration_minutes", "target_distance_km", "target_pace"],

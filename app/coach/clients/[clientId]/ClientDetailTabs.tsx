@@ -42,6 +42,7 @@ type Template = {
   id: string;
   name: string;
   workout_type: WorkoutType;
+  tag: string | null;
   template_exercises: { id: string }[];
 };
 

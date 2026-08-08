@@ -52,7 +52,7 @@ export default async function ClientDetailPage({
   // Coach-owned library, RLS-scoped -- used to populate WeekGrid's sidebar.
   const { data: templates } = await supabase
     .from("workout_templates")
-    .select("id, name, workout_type, template_exercises(id)")
+    .select("id, name, workout_type, tag, template_exercises(id)")
     .order("created_at", { ascending: false });
 
   const workoutIds = (workouts || []).map((w) => w.id);

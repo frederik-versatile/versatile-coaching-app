@@ -20,6 +20,7 @@ type Template = {
   id: string;
   name: string;
   workout_type: WorkoutType;
+  tag: string | null;
   template_exercises: { id: string }[];
 };
 
@@ -180,9 +181,17 @@ function GridCell({
 function TemplateSidebar({ templates }: { templates: Template[] }) {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<WorkoutType | "all">("all");
+  const [tagFilter, setTagFilter] = useState<string | "all">("all");
+
+  // Tags are coach-defined free text, not a fixed set -- the filter chips
+  // are built from whatever values are actually in use, not a hardcoded list.
+  const distinctTags = Array.from(
+    new Set(templates.map((t) => t.tag).filter((tag): tag is string => Boolean(tag)))
+  ).sort();
 
   const visible = templates.filter((t) => {
     if (filter !== "all" && t.workout_type !== filter) return false;
+    if (tagFilter !== "all" && t.tag !== tagFilter) return false;
     if (search && !t.name.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   });
@@ -222,6 +231,32 @@ function TemplateSidebar({ templates }: { templates: Template[] }) {
         ))}
       </div>
 
+      {distinctTags.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          <button
+            type="button"
+            onClick={() => setTagFilter("all")}
+            className={`rounded px-2 py-0.5 text-caption transition-colors ${
+              tagFilter === "all" ? "bg-charcoal text-white" : "border border-neutral text-charcoal hover:bg-background"
+            }`}
+          >
+            All tags
+          </button>
+          {distinctTags.map((tag) => (
+            <button
+              key={tag}
+              type="button"
+              onClick={() => setTagFilter(tag)}
+              className={`rounded px-2 py-0.5 text-caption transition-colors ${
+                tagFilter === tag ? "bg-charcoal text-white" : "border border-neutral text-charcoal hover:bg-background"
+              }`}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      )}
+
       {templates.length === 0 ? (
         <p className="text-caption text-charcoal">No workouts in your library yet.</p>
       ) : visible.length === 0 ? (
@@ -240,6 +275,7 @@ function TemplateSidebar({ templates }: { templates: Template[] }) {
               >
                 {WORKOUT_TYPE_LABELS[t.workout_type]}
               </span>
+              {t.tag && <p className="text-caption text-charcoal">{t.tag}</p>}
               <p className="text-body-sm text-ink">{t.name}</p>
               <p className="text-caption text-charcoal">
                 {t.template_exercises.length} exercise{t.template_exercises.length === 1 ? "" : "s"}

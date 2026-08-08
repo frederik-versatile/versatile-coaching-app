@@ -14,6 +14,7 @@ type Template = {
   id: string;
   name: string;
   workout_type: WorkoutType;
+  tag: string | null;
   exerciseCount: number;
 };
 
@@ -28,6 +29,9 @@ function TemplateCard({ template }: { template: Template }) {
           >
             {WORKOUT_TYPE_LABELS[template.workout_type]}
           </span>
+          {template.tag && (
+            <span className="mt-1 block text-caption text-charcoal">{template.tag}</span>
+          )}
           <p className="mt-1 text-caption text-charcoal">
             {template.exerciseCount} exercise{template.exerciseCount === 1 ? "" : "s"}
           </p>
@@ -57,34 +61,72 @@ function TemplateCard({ template }: { template: Template }) {
 
 export default function LibraryGrid({ templates }: { templates: Template[] }) {
   const [filter, setFilter] = useState<WorkoutType | "all">("all");
+  const [tagFilter, setTagFilter] = useState<string | "all">("all");
 
-  const visible = filter === "all" ? templates : templates.filter((t) => t.workout_type === filter);
+  // Tags are coach-defined free text, not a fixed set -- the filter chips
+  // are built from whatever values are actually in use, not a hardcoded list.
+  const distinctTags = Array.from(
+    new Set(templates.map((t) => t.tag).filter((tag): tag is string => Boolean(tag)))
+  ).sort();
+
+  const visible = templates.filter((t) => {
+    if (filter !== "all" && t.workout_type !== filter) return false;
+    if (tagFilter !== "all" && t.tag !== tagFilter) return false;
+    return true;
+  });
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => setFilter("all")}
-            className={`rounded px-3 py-1 text-body-sm transition-colors ${
-              filter === "all" ? "bg-accent text-white" : "border border-neutral bg-white text-ink hover:bg-background"
-            }`}
-          >
-            All
-          </button>
-          {WORKOUT_TYPES.map((t) => (
+        <div className="space-y-2">
+          <div className="flex flex-wrap gap-2">
             <button
-              key={t}
               type="button"
-              onClick={() => setFilter(t)}
+              onClick={() => setFilter("all")}
               className={`rounded px-3 py-1 text-body-sm transition-colors ${
-                filter === t ? "bg-accent text-white" : "border border-neutral bg-white text-ink hover:bg-background"
+                filter === "all" ? "bg-accent text-white" : "border border-neutral bg-white text-ink hover:bg-background"
               }`}
             >
-              {WORKOUT_TYPE_LABELS[t]}
+              All
             </button>
-          ))}
+            {WORKOUT_TYPES.map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setFilter(t)}
+                className={`rounded px-3 py-1 text-body-sm transition-colors ${
+                  filter === t ? "bg-accent text-white" : "border border-neutral bg-white text-ink hover:bg-background"
+                }`}
+              >
+                {WORKOUT_TYPE_LABELS[t]}
+              </button>
+            ))}
+          </div>
+          {distinctTags.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => setTagFilter("all")}
+                className={`rounded px-3 py-1 text-caption transition-colors ${
+                  tagFilter === "all" ? "bg-charcoal text-white" : "border border-neutral bg-white text-charcoal hover:bg-background"
+                }`}
+              >
+                All tags
+              </button>
+              {distinctTags.map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() => setTagFilter(tag)}
+                  className={`rounded px-3 py-1 text-caption transition-colors ${
+                    tagFilter === tag ? "bg-charcoal text-white" : "border border-neutral bg-white text-charcoal hover:bg-background"
+                  }`}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         <form action={createBlankTemplate}>
           <button

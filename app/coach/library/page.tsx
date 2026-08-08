@@ -16,13 +16,14 @@ export default async function LibraryPage() {
   // exercise detail is only needed inside the per-template editor page.
   const { data: templates } = await supabase
     .from("workout_templates")
-    .select("id, name, workout_type, template_exercises(id)")
+    .select("id, name, workout_type, tag, template_exercises(id)")
     .order("created_at", { ascending: false });
 
   const templateSummaries = (templates || []).map((t) => ({
     id: t.id,
     name: t.name,
     workout_type: t.workout_type,
+    tag: t.tag,
     exerciseCount: t.template_exercises?.length ?? 0,
   }));
 

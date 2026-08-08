@@ -27,11 +27,12 @@ const STEP: Partial<Record<ExerciseField, string>> = {
 // Tailwind's compiler only picks up class names it can find as literal
 // strings in source -- a template-literal-built class like
 // `sm:grid-cols-${n}` is invisible to it and silently produces no CSS.
-// Every count actually used (1, 3, 5) is spelled out here instead.
+// Every count actually used (1, 3, 5, 6) is spelled out here instead.
 const GRID_COLS_CLASS: Record<number, string> = {
   1: "grid-cols-1",
   3: "grid-cols-2 sm:grid-cols-3",
   5: "grid-cols-2 sm:grid-cols-5",
+  6: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-6",
 };
 
 // Renders the right labeled/mono target fields for a workout type -- Strength

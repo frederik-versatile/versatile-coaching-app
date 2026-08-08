@@ -42,6 +42,7 @@ type Template = {
   name: string;
   workout_type: WorkoutType;
   notes: string | null;
+  tag: string | null;
 };
 
 type CatalogExercise = { id: string; name: string };
@@ -58,12 +59,19 @@ function TemplateHeader({
   const router = useRouter();
   const [name, setName] = useState(template.name);
   const [notes, setNotes] = useState(template.notes ?? "");
+  const [tag, setTag] = useState(template.tag ?? "");
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   async function handleSave() {
     setSaving(true);
-    await updateTemplate({ templateId: template.id, name, workoutType, notes: notes || null });
+    await updateTemplate({
+      templateId: template.id,
+      name,
+      workoutType,
+      notes: notes || null,
+      tag: tag || null,
+    });
     setSaving(false);
   }
 
@@ -76,7 +84,7 @@ function TemplateHeader({
 
   return (
     <div className="space-y-3 rounded border border-neutral bg-white p-4">
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-3">
         <div className="space-y-1">
           <label className="block text-body-sm text-charcoal">Workout name</label>
           <input
@@ -98,6 +106,15 @@ function TemplateHeader({
               </option>
             ))}
           </select>
+        </div>
+        <div className="space-y-1">
+          <label className="block text-body-sm text-charcoal">Tag (optional)</label>
+          <input
+            value={tag}
+            onChange={(e) => setTag(e.target.value)}
+            placeholder="e.g. Push, Legs, Off-season"
+            className="w-full rounded border border-neutral px-3 py-2 text-body text-ink focus:border-accent"
+          />
         </div>
       </div>
       <div className="space-y-1">
